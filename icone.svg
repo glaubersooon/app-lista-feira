@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#e3f1e6"/>
+  <rect x="136" y="96" width="240" height="320" rx="30" fill="#ffffff" stroke="#c9e0cf" stroke-width="6"/>
+  <g font-family="Noto Color Emoji" font-size="38" text-anchor="middle">
+    <text x="182" y="156">🥬</text><text x="229" y="156">🍌</text><text x="276" y="156">🕯️</text><text x="325" y="156">🛒</text>
+  </g>
+  <rect x="166" y="176" width="180" height="4" rx="2" fill="#e3f1e6"/>
+  <g fill="#5a9e6c">
+    <rect x="170" y="200" width="40" height="40" rx="9"/>
+    <rect x="170" y="266" width="40" height="40" rx="9"/>
+    <rect x="170" y="332" width="40" height="40" rx="9"/>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M180 221l7 7 14-15"/>
+    <path d="M180 287l7 7 14-15"/>
+    <path d="M180 353l7 7 14-15"/>
+  </g>
+  <g fill="#b9d8c0">
+    <rect x="226" y="212" width="116" height="16" rx="8"/>
+    <rect x="226" y="278" width="98" height="16" rx="8"/>
+    <rect x="226" y="344" width="110" height="16" rx="8"/>
+  </g>
+</svg>
