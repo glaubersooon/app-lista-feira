@@ -152,6 +152,17 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .toast{z-index:30;position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--toast);color:var(--toast-txt);padding:12px 18px;border-radius:10px;font-size:16px;max-width:calc(100% - 32px)}
 @media (max-width:520px){h1{font-size:24px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff!important;zoom:1!important;padding:0!important;margin:0!important}
+  :root{padding:0!important}
+  body>*:not(#impr){display:none!important}
+  #impr{display:block!important;position:static!important;overflow:visible!important;background:none!important;padding:0!important}
+  .impr-barra,.folha .fx{display:none!important}
+  .folha-caixa{max-width:none!important;width:auto!important;height:auto!important}
+  .folha{transform:none!important;box-shadow:none!important;margin:0!important;break-after:page;page-break-after:always}
+  .folha-caixa:last-child .folha{break-after:auto;page-break-after:auto}
+}
 .so-cel{display:none}
 .zapbt{background:var(--check);border-color:var(--check);color:#fff;font-weight:700}
 .emo{border:0;background:transparent;min-height:0;padding:0;width:30px;height:32px;justify-content:center;font-size:21px;flex:none;border-radius:6px}
@@ -451,11 +462,41 @@ function folha(){const inc=listas.filter(l=>!l.min);
       if(usado+hCol[k]>lim()&&pg.cols[c].length){if(c===0){c=1;usado=0}else{pg={cols:[[],[]]};paginas.push(pg);c=0;usado=0}}
       pg.cols[c].push(k);usado+=hCol[k]})}
   const o=$('#impr');
-  o.innerHTML=`<div class="impr-barra"><button data-fechar-impr>← Voltar</button><span>Folha A4, como vai sair no papel${paginas.length>1?` (${paginas.length} páginas)`:''}</span><button class="principal" data-aviso="No app final, este botão abre a impressora.">🖨 Imprimir agora</button></div>`+
+  o.innerHTML=`<div class="impr-barra"><button data-fechar-impr>← Voltar</button><span>Folha A4, como vai sair no papel${paginas.length>1?` (${paginas.length} páginas)`:''}</span><button class="principal so-pc" data-imprimir>🖨 Imprimir agora</button><button class="principal so-cel" data-pdf>📄 Salvar e compartilhar PDF</button></div>`+
     paginas.map((p,n)=>`<div class="folha-caixa"><div class="folha">${n===0?cab:''}${p.unica?p.cols[0].map(k=>blocos[k]).join(''):`<div class="duas">${p.cols.map(col=>`<div class="coluna">${col.map(k=>blocos[k]).join('')}</div>`).join('')}</div>`}</div></div>`).join('');
   o.hidden=false;escala();
   o.querySelectorAll('ul[data-fl]').forEach(ul=>Sortable.create(ul,{group:'fl-'+ul.dataset.fl,animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',onStart:e=>iniciaFlut(e.item),delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,filter:'.fx',preventOnFilter:false,onEnd:()=>{pararFlut();reordenar(ul.dataset.fl,[...ul.children].map(li=>li.dataset.id));render();folha()}}))}
 function reordenar(lid,ids){const l=listas.find(x=>x.id===lid);const fila=ids.map(id=>l.itens.find(i=>i.id===id));l.itens=l.itens.map(i=>i.off?i:fila.shift())}
+function temAtiva(){if(listas.some(l=>!l.min))return true;aviso('Ative pelo menos uma lista para imprimir ou enviar.');return false}
+// Impressão: usa a mesma folha A4 da prévia. Ctrl+P também funciona.
+let imprAuto=false,tituloApp=document.title;
+addEventListener('beforeprint',()=>{document.title=nomePDF().replace(/\.pdf$/,'');if($('#impr').hidden){imprAuto=true;folha()}});
+addEventListener('afterprint',()=>{document.title=tituloApp;if(imprAuto){imprAuto=false;$('#impr').hidden=true}});
+function imprimir(){print()}
+// PDF no celular: desenha cada folha A4 como imagem, junta num PDF e abre o compartilhar.
+let pdfBlob=null,pdfNome='';
+function carregar(src){return new Promise((ok,err)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=err;document.head.appendChild(s)})}
+async function gerarPDF(b){const txt=b.innerHTML;b.disabled=true;b.textContent='Gerando PDF...';let cx;
+  try{
+    if(!window.html2canvas)await carregar('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    if(!window.jspdf)await carregar('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    const aberta=!$('#impr').hidden;folha();
+    cx=document.createElement('div');cx.style.cssText='position:fixed;left:-10000px;top:0';document.body.appendChild(cx);
+    const pags=[...$('#impr').querySelectorAll('.folha')].map(f=>{const c=f.cloneNode(true);c.style.transform='none';c.querySelectorAll('.fx').forEach(x=>x.remove());cx.appendChild(c);return c});
+    if(!aberta)$('#impr').hidden=true;
+    document.body.style.zoom='';await document.fonts.ready;
+    const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4'});pdfNome=nomePDF();pdf.setProperties({title:pdfNome.replace(/\.pdf$/,'')});
+    for(let k=0;k<pags.length;k++){const cv=await html2canvas(pags[k],{scale:2,backgroundColor:'#ffffff'});if(k)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',.92),'JPEG',0,0,210,297)}
+    pdfBlob=pdf.output('blob');await compartilharPDF(true)}
+  catch(e){console.error(e);aviso('Não foi possível gerar o PDF. Confira a internet e tente de novo.')}
+  finally{if(cx)cx.remove();document.body.style.zoom=pref.z;b.disabled=false;b.innerHTML=txt}}
+async function compartilharPDF(primeira){const f=new File([pdfBlob],pdfNome,{type:'application/pdf'});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){
+    try{await navigator.share({files:[f],title:pdfNome.replace(/\.pdf$/,'')});$('#modal').hidden=true;return}
+    catch(e){if(e.name==='AbortError')return;if(!primeira){baixarPDF();return}}
+    const m=$('#modal');m.innerHTML=`<div class="caixa-modal" role="dialog" aria-label="PDF pronto"><div class="modal-topo"><b>PDF pronto</b><button data-modal-fechar>✕ Fechar</button></div><span>${esc(pdfNome)}</span><button class="principal" data-pdf-share>📤 Compartilhar PDF</button><button data-pdf-baixar>⬇ Baixar PDF</button></div>`;m.hidden=false;return}
+  baixarPDF()}
+function baixarPDF(){const a=document.createElement('a');a.href=URL.createObjectURL(pdfBlob);a.download=pdfNome;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);$('#modal').hidden=true;aviso('PDF salvo em Downloads.')}
 function escala(){if($('#impr').hidden)return;document.querySelectorAll('.folha-caixa').forEach(c=>{const s=Math.min(1,c.clientWidth/794);c.querySelector('.folha').style.transform=`scale(${s})`;c.style.height=1123*s+'px'})}
 addEventListener('resize',escala);
 function aviso(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(aviso.t);aviso.t=setTimeout(()=>el.hidden=true,2600)}
@@ -524,15 +565,17 @@ document.addEventListener('click',e=>{
   if(b.dataset.cat){emoCat=+b.dataset.cat;pintarEmo();return}
   if(b.hasAttribute('data-pega')){acharItem(emoAlvo).i.e=b.dataset.pega;$('#modal').hidden=true;render();return}
   if(b.hasAttribute('data-modal-fechar')){$('#modal').hidden=true;return}
-  if(b.hasAttribute('data-pdf')){finalizar();aviso(`No app final, gera o arquivo "${nomePDF()}" e abre o compartilhar do celular.`);return}
-  if(b.hasAttribute('data-zap')){finalizar();const m=$('#modal');m.innerHTML=`<div class="caixa-modal" role="dialog" aria-label="Mensagem do WhatsApp"><div class="modal-topo"><b>Assim vai a mensagem no WhatsApp</b><button data-modal-fechar>✕ Fechar</button></div><pre class="zap">${esc(textoZap())}</pre><span class="data">No app final, este botão abre o WhatsApp com a mensagem pronta.</span></div>`;m.hidden=false;return}
+  if(b.hasAttribute('data-pdf')){if(!temAtiva())return;finalizar();gerarPDF(b);return}
+  if(b.hasAttribute('data-pdf-share')){compartilharPDF();return}
+  if(b.hasAttribute('data-pdf-baixar')){baixarPDF();return}
+  if(b.hasAttribute('data-zap')){if(!temAtiva())return;finalizar();location.href='https://wa.me/?text='+encodeURIComponent(textoZap());return}
   if(b.hasAttribute('data-busca-abrir')){busca=busca??'';$('#buscaGeral').hidden=false;$('#bg-in').focus();aplicarBusca();return}
   if(b.hasAttribute('data-busca-fechar')){busca=null;$('#bg-in').value='';$('#buscaGeral').hidden=true;aplicarBusca();return}
   if(b.dataset.buscaLista){buscaListaId=buscaListaId===b.dataset.buscaLista?null:b.dataset.buscaLista;buscaListaTexto='';render();return}
   if(b.dataset.buscaListaFechar){buscaListaId=null;buscaListaTexto='';render();return}
   if(b.hasAttribute('data-nova-abrir')){novaListaAberta=true;render();return}
   if(b.dataset.ir){const li=document.querySelector(`.item[data-id="${b.dataset.ir}"]`);if(li){li.scrollIntoView({behavior:'smooth',block:'center'});li.classList.add('flash');setTimeout(()=>li.classList.remove('flash'),1900)}return}
-  if(b.hasAttribute('data-imprimir')){finalizar();aviso('No app final, este botão abre a impressora direto.');return}
+  if(b.hasAttribute('data-imprimir')){if(!temAtiva())return;finalizar();imprimir();return}
   if(b.hasAttribute('data-fechar-impr')){$('#impr').hidden=true;return}
   if(b.hasAttribute('data-ver')){folha();return}
   if(b.hasAttribute('data-fechar-previa')){previaAberta=false;$('#previa').hidden=true;return}
