@@ -1,5 +1,5 @@
 // Sincronização com o Firebase (Firestore): dados, presença e versão finalizada.
-// Usa as variáveis e funções globais do index.html: listas, lixeira, finalizada,
+// Usa as variáveis e funções globais do index.html: listas, lixeira, finalizada, regraDia,
 // editandoIds, SEMENTE, render, aviso, mostrarMsg, ocupado, $.
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {initializeFirestore,persistentLocalCache,persistentMultipleTabManager,collection,doc,onSnapshot,writeBatch,setDoc,deleteDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
@@ -26,6 +26,7 @@ function iniciar(){
   const base=['acesso',CODIGO];
   const colL=collection(db,...base,'listas'),colI=collection(db,...base,'itens'),colP=collection(db,...base,'presenca');
   const refFin=doc(db,...base,'estado','finalizada');
+  const refRegraDia=doc(db,...base,'estado','regraDia');
 
   const dL=new Map(),dI=new Map();
   let okL=false,okI=false,servidorL=false,semeado=false,aplicando=false,pendRender=false;
@@ -64,6 +65,7 @@ function iniciar(){
     s.docChanges().forEach(c=>{if(c.type==='removed')dI.delete(c.doc.id);else dI.set(c.doc.id,c.doc.data())});
     okI=true;reconstruir()},erro);
   onSnapshot(refFin,s=>{finalizada=s.exists()?s.data({serverTimestamps:'estimate'}):null},()=>{});
+  onSnapshot(refRegraDia,s=>{regraDia=s.exists()?s.data():null},()=>{});
 
   // Primeira vez: grava as listas iniciais (ids fixos, então dois aparelhos ao mesmo tempo não duplicam)
   function semear(){
@@ -113,6 +115,7 @@ function iniciar(){
   window.nuvem={
     salvar,
     editando(id){if((id||null)===meuEd)return;meuEd=id||null;pulso()},
-    finalizar(estado){setDoc(refFin,{...estado,em:serverTimestamp()}).catch(erro)}
+    finalizar(estado){setDoc(refFin,{...estado,em:serverTimestamp()}).catch(erro)},
+    marcarRegraDia(data){setDoc(refRegraDia,{data,em:serverTimestamp()}).catch(erro)}
   };
 }
