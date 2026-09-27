@@ -152,6 +152,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .toast{z-index:30;position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--toast);color:var(--toast-txt);padding:12px 18px;border-radius:10px;font-size:16px;max-width:calc(100% - 32px)}
 @media (max-width:520px){h1{font-size:24px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.dica-arrastar{margin:6px 16px 0;padding:6px 10px;font-size:15px;color:var(--suave);background:var(--cinza);border-radius:8px;text-align:center}
 @media print{
   @page{size:A4;margin:0}
   html,body{background:#fff!important;zoom:1!important;padding:0!important;margin:0!important}
@@ -395,6 +396,7 @@ function render(){
       <div class="topo-dir"><button class="tog" data-min><span class="chev" aria-hidden="true">▾</span>${l.min?'Ativar lista':'Desativar lista'}</button>${l.fixa?'':'<button class="xlista" data-xlista aria-label="Excluir lista" title="Excluir lista">✕</button>'}</div></div>
       ${confirmaExcluir===l.id?'<div class="alerta" role="alert" style="margin:10px 16px"><div><b>Tem certeza de que deseja excluir esta lista?</b><br>Os itens dela vão para a Lixeira.</div><div class="acoes"><button data-xlista-cancel>Cancelar</button><button data-xlista-sim style="font-weight:700">Sim, excluir</button></div></div>':''}
       ${l.min?'':`<div class="corpo">${tudoHTML(l)}${addHTML(l)}
+      ${mostrarDica()&&l.itens.length>1?'<div class="dica-arrastar">✋ Segure um item e arraste para mudar a ordem</div>':''}
       <ul class="itens" data-ul="${l.id}">${l.itens.map(itemHTML).join('')}</ul>
       ${l.itens.length?'':'<div class="vazio" style="margin:0 16px 16px">Arraste itens para cá ou toque em Adicionar item</div>'}</div>`}`;
     cards.push(q);
@@ -407,7 +409,7 @@ function render(){
   document.querySelectorAll('[data-ul]').forEach(ul=>Sortable.create(ul,{group:'listas',animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,filter:'.ck,.det,.det-in,.emo,.nome-in',preventOnFilter:false,
     onStart:e=>{document.body.classList.add('arrastando');iniciaFlut(e.item);marcaEd(e.item.dataset.id)},
     onMove:e=>{document.querySelectorAll('.quadro').forEach(q=>q.classList.toggle('alvo',q.contains(e.to)))},
-    onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.alvo').forEach(q=>q.classList.remove('alvo'));lerDOM();marcaEd(null);render()}}));
+    onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.alvo').forEach(q=>q.classList.remove('alvo'));lerDOM();marcaEd(null);dicaVista();render()}}));
   if(addAberto){const inp=$('#novo-'+addAberto);if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);inp.closest('.add-caixa').querySelector('[data-sug]').innerHTML=alertaDup?'':sugestHTML(addTexto)}}
   if(novaListaAberta){const inp=$('#novaLista-nome');if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
   if(buscaListaId){const inp=$('#buscaLista-'+buscaListaId);if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
@@ -467,6 +469,10 @@ function folha(){const inc=listas.filter(l=>!l.min);
   o.hidden=false;escala();
   o.querySelectorAll('ul[data-fl]').forEach(ul=>Sortable.create(ul,{group:'fl-'+ul.dataset.fl,animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',onStart:e=>iniciaFlut(e.item),delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,filter:'.fx',preventOnFilter:false,onEnd:()=>{pararFlut();reordenar(ul.dataset.fl,[...ul.children].map(li=>li.dataset.id));render();folha()}}))}
 function reordenar(lid,ids){const l=listas.find(x=>x.id===lid);const fila=ids.map(id=>l.itens.find(i=>i.id===id));l.itens=l.itens.map(i=>i.off?i:fila.shift())}
+// Dica de arrastar: só em tela de toque, some depois do primeiro arraste (guardado no aparelho).
+let dicaOk=false;try{dicaOk=localStorage.getItem('dica-arrastar')==='1'}catch(e){}
+function mostrarDica(){return !dicaOk&&matchMedia('(hover:none)').matches}
+function dicaVista(){if(dicaOk)return;dicaOk=true;try{localStorage.setItem('dica-arrastar','1')}catch(e){}}
 function temAtiva(){if(listas.some(l=>!l.min))return true;aviso('Ative pelo menos uma lista para imprimir ou enviar.');return false}
 // Impressão: usa a mesma folha A4 da prévia. Ctrl+P também funciona.
 let imprAuto=false,tituloApp=document.title;
