@@ -1,0 +1,67 @@
+name: E-mail da lista de compras
+
+# Terça e sexta às 6h50 de Brasília (9h50 UTC). O GitHub costuma atrasar alguns minutos,
+# então o e-mail chega perto das 7h.
+on:
+  schedule:
+    - cron: '50 9 * * 2'
+    - cron: '50 9 * * 5'
+  workflow_dispatch:
+    inputs:
+      dia:
+        description: 'Qual e-mail enviar'
+        type: choice
+        options: [terca, sexta]
+        default: sexta
+      teste:
+        description: 'Mandar para o e-mail de teste (o seu), não para a sogra'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar e-mail
+        env:
+          PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
+          CODIGO: ${{ secrets.CODIGO_ACESSO }}
+          EMAIL_DESTINO: ${{ secrets.EMAIL_DESTINO }}
+          EMAIL_TESTE: ${{ secrets.EMAIL_TESTE }}
+          MANUAL: ${{ github.event_name == 'workflow_dispatch' }}
+          TESTE: ${{ inputs.teste }}
+          DIA: ${{ inputs.dia }}
+        run: |
+          if [ "$MANUAL" = "true" ] && [ "$TESTE" = "true" ]; then PARA="$EMAIL_TESTE"; else PARA="$EMAIL_DESTINO"; fi
+          if [ -z "$PARA" ]; then echo "Sem e-mail de destino cadastrado nos segredos. Nada enviado."; exit 0; fi
+          if [ -z "$DIA" ]; then
+            if [ "$(TZ=America/Sao_Paulo date +%u)" = "2" ]; then DIA=terca; else DIA=sexta; fi
+          fi
+          if [ "$DIA" = "terca" ]; then ASSUNTO="Compra Sr. Jorge, terça"; else ASSUNTO="Compra Feira, Sr. Jorge e/ou outros, sexta"; fi
+          LINK="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}"
+          jq -n --arg u "$PUBLIC_KEY" --arg k "$PRIVATE_KEY" --arg para "$PARA" --arg assunto "$ASSUNTO" --arg link "$LINK" \
+            '{service_id:"service_0xqf97q",template_id:"template_bbidvdd",user_id:$u,accessToken:$k,template_params:{para:$para,assunto:$assunto,link:$link}}' > corpo.json
+          COD=$(curl -sS -o resposta.txt -w '%{http_code}' -X POST https://api.emailjs.com/api/v1.0/email/send \
+            -H 'Content-Type: application/json' -d @corpo.json)
+          rm -f corpo.json
+          echo "Resposta do EmailJS ($COD): $(cat resposta.txt)"
+          [ "$COD" = "200" ] || { echo "O envio falhou."; exit 1; }
+          echo "E-mail \"$ASSUNTO\" enviado."
+
+      # O GitHub desliga agendamentos de repositório público depois de 60 dias sem atividade.
+      # Se o último commit tiver 45 dias ou mais, faz um commit vazio para manter o e-mail funcionando.
+      - uses: actions/checkout@v4
+      - name: Manter o agendamento ativo
+        run: |
+          DIAS=$(( ( $(date +%s) - $(git log -1 --format=%ct) ) / 86400 ))
+          echo "Último commit há $DIAS dias."
+          if [ "$DIAS" -ge 45 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "Mantém o e-mail automático ativo"
+            git push
+          fi
