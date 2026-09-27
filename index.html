@@ -208,6 +208,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .topo-acoes button:hover,.acess button:hover,.rodape button:hover,.alerta button:hover,.modal-topo button:hover,.cats-mercado button:hover{background:var(--linha)}
 .rodape [data-ver]{background:var(--bg)}
 .rodape .principal{background:var(--tinta);color:var(--bg)}
+.rodape .zapbt{background:var(--check);border-color:var(--check);color:#fff}
 .cats-mercado button.on{background:var(--tinta);color:var(--bg)}
 .presenca,.alerta,.fora{border:0}
 .fora{background:var(--bg)}
@@ -242,7 +243,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
   .topo-acoes button{justify-content:center}
   .presenca{justify-content:center;font-size:14px;text-align:center}
   .rodape{padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px))}
-  .rodape-in{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}
+  .rodape-in{display:grid;grid-template-columns:1fr;gap:6px 8px}
   .rodape-in [data-ver]{grid-column:1/-1;min-height:38px!important}
   .so-pc{display:none!important}
   .so-cel{display:inline-flex!important}
@@ -277,7 +278,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 <div class="rodape">
   <div class="rodape-in">
     <div class="vai" id="vai"></div>
-    <button data-ver>👁 Ver lista antes de imprimir</button>
+    <button class="so-pc" data-ver>👁 Ver lista antes de imprimir</button>
     <button class="principal so-pc" data-imprimir>🖨 Imprimir</button>
     <button class="principal so-cel" data-pdf>📄 Salvar e compartilhar PDF</button>
     <button class="so-cel zapbt" data-zap>💬 Enviar pelo WhatsApp</button>
