@@ -14,7 +14,7 @@ function lerCodigo(){
   try{if(c)localStorage.setItem('codigo-compras',c);else c=localStorage.getItem('codigo-compras')}catch(e){}
   return c&&/^[A-Za-z0-9_-]{20,}$/.test(c)?c:null}
 const CODIGO=lerCodigo();
-const MODO_TESTE=new URLSearchParams(location.search).get('teste')==='1';
+const MODO_TESTE=/[?&]teste=1(&|$)/.test(location.search+location.hash);
 window.MODO_TESTE=MODO_TESTE;
 
 if(!CODIGO){mostrarMsg('Abra a lista pelo link do e-mail.<br>Esse link tem o código de acesso.')}
@@ -30,7 +30,6 @@ function iniciar(){
   const refFin=doc(db,...base,'estado','finalizada');
   const refRegraDia=doc(db,...base,'estado','regraDia');
   const refSessao=doc(db,...base,'estado','sessao');
-  const inicioSessao=Date.now();
 
   const dL=new Map(),dI=new Map();
   let okL=false,okI=false,servidorL=false,semeado=false,aplicando=false,pendRender=false,bloqueado=false;
@@ -71,11 +70,6 @@ function iniciar(){
     okI=true;reconstruir()},erro);
   onSnapshot(refFin,s=>{finalizada=s.exists()?s.data({serverTimestamps:'estimate'}):null},()=>{});
   onSnapshot(refRegraDia,s=>{regraDia=s.exists()?s.data():null},()=>{});
-  onSnapshot(refSessao,s=>{
-    if(bloqueado||!s.exists())return;
-    const d=s.data({serverTimestamps:'estimate'}),em=d.em&&d.em.toMillis?d.em.toMillis():0;
-    if(em>inicioSessao){bloqueado=true;mostrarMsg('Você foi desconectado.<br>Peça o link por e-mail para entrar de novo.')}
-  },()=>{});
 
   // Primeira vez: grava as listas iniciais (ids fixos, então dois aparelhos ao mesmo tempo não duplicam)
   function semear(){
@@ -109,6 +103,15 @@ function iniciar(){
   // ---- Presença: quem está com o app aberto e qual item está mexendo ----
   const SID=Math.random().toString(36).slice(2)+Date.now().toString(36);
   let meuEd=null;const pres=new Map();
+  // Derrubar todos: ignora o valor que já existia ao conectar (não é um "derrubar" acontecendo agora,
+  // é histórico) e nunca desconecta quem mandou o derrubar (compara pelo SID de quem gravou).
+  let sessaoPrimeira=true;
+  onSnapshot(refSessao,s=>{
+    const era=sessaoPrimeira;sessaoPrimeira=false;
+    if(era||bloqueado||!s.exists())return;
+    const d=s.data();
+    if(d.por!==SID){bloqueado=true;mostrarMsg('Você foi desconectado.<br>Peça o link por e-mail para entrar de novo.')}
+  },()=>{});
   const pulso=()=>{if(MODO_TESTE)return;setDoc(doc(colP,SID),{visto:serverTimestamp(),editando:meuEd}).catch(()=>{})};
   pulso();setInterval(pulso,20000);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pulso()});
@@ -128,6 +131,6 @@ function iniciar(){
     editando(id){if((id||null)===meuEd)return;meuEd=id||null;pulso()},
     finalizar(estado){if(MODO_TESTE)return;setDoc(refFin,{...estado,em:serverTimestamp()}).catch(erro)},
     marcarRegraDia(data){if(MODO_TESTE)return;setDoc(refRegraDia,{data,em:serverTimestamp()}).catch(erro)},
-    derrubar(){if(MODO_TESTE)return;setDoc(refSessao,{em:serverTimestamp()}).catch(erro)}
+    derrubar(){if(MODO_TESTE)return;setDoc(refSessao,{em:serverTimestamp(),por:SID}).catch(erro)}
   };
 }

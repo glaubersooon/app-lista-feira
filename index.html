@@ -32,6 +32,9 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .ponto{width:10px!important;height:10px!important}
 .ponto{width:12px;height:12px;border-radius:50%;background:var(--pres);flex:none;animation:pulsa 1.6s ease-in-out infinite}
 @keyframes pulsa{50%{opacity:.35}}
+@keyframes aparecer{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes crescer{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes surgir{from{opacity:0}to{opacity:1}}
 .grade{display:flex;gap:20px;align-items:flex-start}
 .col{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px}
 .quadro{border:1.5px solid color-mix(in srgb,var(--cor) 45%,var(--bg));border-radius:16px;background:var(--fundo-quadro);overflow:hidden;transition:border-color .15s;container-type:inline-size}
@@ -128,7 +131,7 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .sugest-tit{font-size:14px;color:var(--suave);padding:6px 12px;background:var(--cinza)}
 .sugest button{width:100%;border:0;border-top:1px solid var(--linha);border-radius:0;justify-content:space-between;font-size:17px;min-height:44px}
 .sugest small{color:var(--suave);font-size:14px}
-.alerta{border:1px solid var(--pres);background:var(--pres-bg);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;font-size:17px}
+.alerta{border:1px solid var(--pres);background:var(--pres-bg);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;font-size:17px;animation:aparecer .16s ease}
 .alerta .acoes{display:flex;gap:8px}
 .alerta .acoes button{flex:1;font-size:15px;padding:6px 8px;justify-content:center;text-align:center;line-height:1.2}
 .previa{border:1px solid var(--linha);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:18px;background:var(--bg)}
@@ -151,13 +154,20 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .nova{border:1.5px dashed var(--min-borda);border-radius:16px;min-height:64px;font-size:18px;justify-content:center;gap:10px;width:100%;background:transparent;color:var(--suave)}
 .rodape{position:fixed;left:0;right:0;bottom:0;background:var(--barra-forte);border-top:0;box-shadow:0 -3px 10px rgba(0,0,0,.08);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
 .rodape-in{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.vai{flex:1 1 260px;font-size:17px;color:var(--barra-forte-txt)}
+.vai{flex:1 1 260px;font-size:14px;color:var(--barra-forte-txt)}
 .vai b{color:var(--barra-forte-txt)}
 .principal{background:var(--tinta);color:var(--bg);border-color:var(--tinta);font-weight:700}
-.toast{z-index:30;position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--toast);color:var(--toast-txt);padding:12px 18px;border-radius:10px;font-size:16px;max-width:calc(100% - 32px)}
+.toast{z-index:30;position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--toast);color:var(--toast-txt);padding:12px 18px;border-radius:10px;font-size:16px;max-width:calc(100% - 32px);animation:aparecer .18s ease}
 @media (max-width:520px){h1{font-size:24px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .dica-arrastar{margin:6px 16px 0;padding:6px 10px;font-size:15px;color:var(--suave);background:var(--cinza);border-radius:8px;text-align:center}
+@keyframes desliza-tutorial{0%,15%{transform:translateX(0)}50%,65%{transform:translateX(78px)}100%{transform:translateX(0)}}
+.cartao-tutorial{animation:desliza-tutorial 2.4s ease-in-out infinite}
+.balao-tutorial{position:fixed;left:50%;bottom:170px;transform:translateX(-50%);z-index:35;background:var(--bg);border:1px solid var(--linha);border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.22);padding:16px;max-width:260px;width:calc(100% - 32px);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;animation:crescer .2s cubic-bezier(.2,.8,.2,1)}
+.balao-tutorial svg{width:100%;height:auto}
+.balao-tutorial p{margin:0;font-size:15px;color:var(--tinta)}
+.balao-tutorial .fechar-tutorial{position:absolute;top:6px;right:6px;min-height:0;padding:2px 8px;border:0;background:transparent;color:var(--suave);font-size:14px}
+.balao-tutorial .ok-tutorial{background:var(--tinta);color:var(--bg);border-color:var(--tinta);width:100%;justify-content:center}
 @media print{
   @page{size:A4;margin:0}
   html,body{background:#fff!important;zoom:1!important;padding:0!important;margin:0!important}
@@ -174,8 +184,8 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .emo{border:0;background:transparent;min-height:0;padding:0;width:30px;height:32px;justify-content:center;font-size:21px;flex:none;border-radius:6px}
 .emo:hover{background:var(--cinza)}
 .emo.sem{font-size:18px;color:var(--apagado);opacity:.6}
-.modal{position:fixed;inset:0;z-index:25;background:color-mix(in srgb,var(--tinta) 50%,transparent);display:flex;align-items:center;justify-content:center;padding:16px}
-.caixa-modal{background:var(--bg);border-radius:16px;width:100%;max-width:500px;max-height:86vh;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.modal{position:fixed;inset:0;z-index:25;background:color-mix(in srgb,var(--tinta) 50%,transparent);display:flex;align-items:center;justify-content:center;padding:16px;animation:surgir .15s ease}
+.caixa-modal{background:var(--bg);border-radius:16px;width:100%;max-width:500px;max-height:86vh;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:crescer .18s cubic-bezier(.2,.8,.2,1)}
 .modal-topo{display:flex;align-items:center;gap:10px}
 .modal-topo button{margin-left:auto;flex:none}
 .emojis{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,1fr));gap:6px}
@@ -184,16 +194,15 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .zap{margin:0;white-space:pre-wrap;font-family:inherit;font-size:16px;background:var(--cinza);border-radius:10px;padding:12px}
 .topo-dir{grid-area:botao;justify-self:end;display:flex;gap:6px;align-items:center}
 .xlista{min-height:36px;min-width:36px;padding:4px 10px;font-size:15px;justify-content:center;color:var(--suave);border-color:transparent;background:var(--bg)}
-.menu-item{position:fixed;z-index:40;background:var(--bg);border:1px solid var(--linha);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column;gap:4px;min-width:200px}
+.menu-item{position:fixed;z-index:40;background:var(--bg);border:1px solid var(--linha);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column;gap:4px;min-width:200px;animation:crescer .12s ease}
 .menu-item button{justify-content:flex-start;border-color:transparent;font-size:17px}
 .menu-item button:hover{background:var(--cinza)}
 .menu-item .perigo{color:#b3261e}
-.lix-linha{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-top:1px solid var(--linha);font-size:17px}
-.lix-linha .lix-topo{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.lix-linha .lix-nome{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lix-linha small{color:var(--suave);font-size:14px}
-.sugest .lix-linha:first-child{border-top:0}
-.lix-linha button{flex:none;font-size:15px}
+.lix-lista{display:flex;flex-direction:column;gap:8px;width:100%}
+.lix-item{flex-direction:column;align-items:stretch;gap:6px;cursor:default}
+.lix-item .lix-topo{display:flex;align-items:center;gap:8px}
+.lix-item .lix-meta{color:var(--suave);font-size:14px}
+.lix-item button{align-self:flex-end}
 .msg{border:1px dashed var(--linha);border-radius:16px;padding:24px;text-align:center;font-size:18px;color:var(--suave);width:100%}
 
 .quadro{border:0;background:var(--cor-bg)}
@@ -262,11 +271,14 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 
 <div class="pagina">
   <div class="acess" aria-label="Acessibilidade"><button data-zoom="-1" aria-label="Diminuir tamanho">A−</button><button data-zoom="1" aria-label="Aumentar tamanho">A+</button><button data-tema id="tema" aria-label="Alternar modo claro e escuro">☾<span id="badgeTeste" hidden title="Versão de teste: não salva nada" style="font-weight:800;color:#c0392b;margin-left:3px">T</span></button></div>
-  <script>if(new URLSearchParams(location.search).get('teste')==='1')document.getElementById('badgeTeste').hidden=false</script>
+  <script>if(/[?&]teste=1(&|$)/.test(location.search+location.hash))document.getElementById('badgeTeste').hidden=false</script>
   <header>
-    <div>
-      <h1>Compras da semana</h1>
-      <div class="data" id="data"></div>
+    <div class="titulo-linha">
+      <img src="icone-192.png" width="32" height="32" alt="" style="border-radius:8px;flex:none">
+      <div>
+        <h1>Compras da semana</h1>
+        <div class="data" id="data"></div>
+      </div>
     </div>
     <div class="topo-acoes">
       <div class="presenca" id="presenca" role="status" hidden><span class="ponto" aria-hidden="true"></span>Outra pessoa está editando a lista neste momento</div>
@@ -280,6 +292,9 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 
   <div class="grade" id="grade"></div>
   <section class="previa" id="previa" hidden></section>
+  <div id="instalarLinha" hidden style="display:flex;justify-content:center;padding:8px 0 4px">
+    <button data-instalar><img src="icone-192.png" width="20" height="20" alt="" style="border-radius:5px">Instalar o app</button>
+  </div>
 </div>
 
 <div class="rodape">
@@ -416,7 +431,6 @@ function render(){
     q.innerHTML=`<div class="quadro-topo">
       <h2 title="${esc(l.nome)}">${esc(l.nome)}</h2><span class="conta">${contar(l)}</span>${l.min?'<span class="fora">fora da impressão</span>':''}
       <div class="topo-dir"><button class="tog" data-min><span class="chev" aria-hidden="true">▾</span>${l.min?'Ativar lista':'Desativar lista'}</button></div></div>
-      ${confirmaExcluir===l.id?'<div class="alerta" role="alert" style="margin:10px 16px"><div><b>Tem certeza de que deseja excluir esta lista?</b><br>Os itens dela vão para a Lixeira.</div><div class="acoes"><button data-xlista-cancel>Cancelar</button><button data-xlista-sim style="font-weight:700">Sim, excluir</button></div></div>':''}
       ${l.min?'':`<div class="corpo">${tudoHTML(l)}${addHTML(l)}
       ${mostrarDica()&&l.itens.length>1?'<div class="dica-arrastar">✋ Segure um item e arraste para mudar a ordem</div>':''}
       <ul class="itens" data-ul="${l.id}">${l.itens.map(itemHTML).join('')}</ul>
@@ -434,7 +448,7 @@ function render(){
     onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.alvo').forEach(q=>q.classList.remove('alvo'));lerDOM();marcaEd(null);dicaVista();render()}}));
   document.querySelectorAll('.col').forEach(c=>Sortable.create(c,{group:'colunas',handle:'.quadro-topo',filter:'.tog,.xlista,.nova',preventOnFilter:false,animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,
     onStart:e=>{document.body.classList.add('arrastando');iniciaFlutLista(e.item)},
-    onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');lerColunas();dicaVista();render()}}));
+    onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');lerColunas();dicaVista();if(window.nuvem)nuvem.salvar()}}));
   if(addAberto){const inp=$('#novo-'+addAberto);if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);inp.closest('.add-caixa').querySelector('[data-sug]').innerHTML=alertaDup?'':sugestHTML(addTexto)}}
   if(novaListaAberta){const inp=$('#novaLista-nome');if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
   if(buscaListaId){const inp=$('#buscaLista-'+buscaListaId);if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
@@ -456,7 +470,8 @@ function aplicarBuscaLista(){document.querySelectorAll('.item.achado-lista').for
   const l=listas.find(x=>x.id===buscaListaId);if(!l)return;
   l.itens.forEach(i=>{if(norm(i.n).includes(q)){const li=document.querySelector(`.item[data-id="${i.id}"]`);if(li)li.classList.add('achado-lista')}})}
 function montar(g,cards){const n=Math.max(1,Math.floor((g.clientWidth+20)/380));const cols=[...Array(n)].map(()=>{const c=document.createElement('div');c.className='col';g.appendChild(c);return c});
-  cards.forEach((c,i)=>cols[i%n].appendChild(c))}
+  const porColuna=Math.ceil(cards.length/n)||1;
+  cards.forEach((c,i)=>cols[Math.min(n-1,Math.floor(i/porColuna))].appendChild(c))}
 let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{const g=$('#grade');if(Math.max(1,Math.floor((g.clientWidth+20)/380))!==g.children.length&&!document.body.classList.contains('arrastando'))render()},200)});
 let flut=null,px=0,py=0,flutOffX=0;
 const pos=e=>{const p=e.touches?e.touches[0]:e;if(p){px=p.clientX;py=p.clientY}if(flut)moverFlut()};
@@ -473,7 +488,7 @@ function lerColunas(){const mapa=new Map(listas.map(l=>[l.id,l])),ordem=[];
   const novaOrdem=ordem.map(id=>mapa.get(id)).filter(Boolean);
   if(novaOrdem.length===listas.length)listas.splice(0,listas.length,...novaOrdem)}
 function resumo(){const inc=listas.filter(l=>!l.min).map(l=>l.nome);
-  $('#vai').innerHTML=inc.length?`Vai sair na impressão: <b>${inc.map(esc).join(' e ')}</b>`:'Nenhuma lista ativa para imprimir'}
+  $('#vai').innerHTML=inc.length?`Vai sair na impressão: ${inc.map(n=>`<b>${esc(n)}</b>`).join(' e ')}`:'Nenhuma lista ativa para imprimir'}
 function previa(){const p=$('#previa');const inc=listas.filter(l=>!l.min);
   p.innerHTML=`<div class="previa-topo"><b>Assim vai sair na impressão</b><span class="data">${dataTxt}</span><button data-fechar-previa>Fechar</button></div>`+
     (inc.length?inc.map(l=>{const at=l.itens.filter(i=>!i.off);return `<div><h3>Lista ${esc(l.nome)}</h3>${at.length?`<ul>${at.map(i=>`<li>${esc(linha(i))}</li>`).join('')}</ul>`:'<span class="data">Nenhum item marcado</span>'}</div>`}).join(''):'<span class="data">Nenhuma lista ativa.</span>');
@@ -504,12 +519,36 @@ function reordenar(lid,ids){const l=listas.find(x=>x.id===lid);const fila=ids.ma
 let dicaOk=false;try{dicaOk=localStorage.getItem('dica-arrastar')==='1'}catch(e){}
 function mostrarDica(){return !dicaOk&&matchMedia('(hover:none)').matches}
 function dicaVista(){if(dicaOk)return;dicaOk=true;try{localStorage.setItem('dica-arrastar','1')}catch(e){}}
+// Tutorial (uma vez só): ao interagir com um item pela primeira vez, mostra como arrastar para outra lista.
+let tutorialOk=false;try{tutorialOk=localStorage.getItem('tutorial-arrastar')==='1'}catch(e){}
+function mostrarTutorialArrastar(){
+  if(tutorialOk)return;tutorialOk=true;try{localStorage.setItem('tutorial-arrastar','1')}catch(e){}
+  const b=document.createElement('div');b.className='balao-tutorial';b.setAttribute('role','dialog');b.setAttribute('aria-label','Dica: arrastar itens');
+  b.innerHTML=`<button class="fechar-tutorial" aria-label="Fechar">✕</button>
+    <svg viewBox="0 0 160 90" aria-hidden="true">
+      <rect x="6" y="10" width="60" height="70" rx="10" fill="var(--cinza)"/>
+      <rect x="94" y="10" width="60" height="70" rx="10" fill="var(--cinza)"/>
+      <rect class="cartao-tutorial" x="16" y="24" width="40" height="20" rx="6" fill="var(--check)"/>
+    </svg>
+    <p>Segure e arraste um item para mover para outra lista.</p>
+    <button class="ok-tutorial">Entendi</button>`;
+  document.body.appendChild(b);
+  const fechar=()=>b.remove();
+  b.querySelector('.fechar-tutorial').addEventListener('click',fechar);
+  b.querySelector('.ok-tutorial').addEventListener('click',fechar);
+}
+document.addEventListener('click',e=>{if(e.target.closest('.itens .item'))mostrarTutorialArrastar()},{capture:true});
 function temAtiva(){if(listas.some(l=>!l.min))return true;aviso('Ative pelo menos uma lista para imprimir ou enviar.');return false}
 // Impressão: usa a mesma folha A4 da prévia. Ctrl+P também funciona.
 let imprAuto=false,tituloApp=document.title;
 addEventListener('beforeprint',()=>{document.title=nomePDF().replace(/\.pdf$/,'');if($('#impr').hidden){imprAuto=true;folha()}});
 addEventListener('afterprint',()=>{document.title=tituloApp;if(imprAuto){imprAuto=false;$('#impr').hidden=true}});
 function imprimir(){print()}
+// Atalho para instalar como app (PWA): só aparece quando o navegador oferece a instalação.
+let promptInstalar=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptInstalar=e;
+  if(!(matchMedia('(display-mode: standalone)').matches||navigator.standalone))$('#instalarLinha').hidden=false});
+addEventListener('appinstalled',()=>{promptInstalar=null;$('#instalarLinha').hidden=true});
 // PDF no celular: desenha cada folha A4 como imagem, junta num PDF e abre o compartilhar.
 let pdfBlob=null,pdfNome='';
 function carregar(src){return new Promise((ok,err)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=err;document.head.appendChild(s)})}
@@ -561,7 +600,7 @@ document.addEventListener('contextmenu',e=>{
   if(li){e.preventDefault();abrirMenu(li.dataset.id,e.clientX,e.clientY);return}
   const topo=e.target.closest('.quadro-topo');
   if(topo){const q=topo.closest('.quadro'),l=q&&listas.find(x=>x.id===q.dataset.lista);
-    if(l&&!l.fixa){e.preventDefault();confirmaExcluir=confirmaExcluir===l.id?null:l.id;render()}
+    if(l&&!l.fixa){e.preventDefault();pedirExcluirLista(l.id)}
     return}
   if(e.target.closest('header')||e.target.closest('#presenca')){e.preventDefault();abrirMenuTopo(e.clientX,e.clientY)}
 });
@@ -581,8 +620,12 @@ function pintarLixeira(){const m=$('#modal');const nomes=new Map(listas.map(l=>[
   const vis=lixeira.filter(i=>lixFiltro==='todos'||i.delLista===lixFiltro).sort((a,b)=>(b.delEm||0)-(a.delEm||0));
   m.innerHTML=`<div class="caixa-modal" role="dialog" aria-label="Lixeira"><div class="modal-topo"><b>🗑 Lixeira</b><button data-modal-fechar>✕ Fechar</button></div>
   <div class="cats-mercado"><button data-lixf="todos" class="${lixFiltro==='todos'?'on':''}">Todos</button>${[...nomes].map(([id,n])=>`<button data-lixf="${esc(id)}" class="${lixFiltro===id?'on':''}">${esc(n)}</button>`).join('')}</div>
-  ${vis.length?`<div class="sugest">${vis.map(i=>`<div class="lix-linha"><div class="lix-topo"><span class="lix-nome">${ico(i.e)} ${esc(i.n)}</span><button data-recuperar="${i.id}">↩ Recuperar</button></div><small>de ${esc(i.delListaNome||'')}</small></div>`).join('')}</div>`:'<div class="vazio">Nada na lixeira.</div>'}</div>`;m.hidden=false}
+  ${vis.length?`<div class="lix-lista">${vis.map(i=>`<div class="item lix-item"><div class="lix-topo"><span class="emo${i.e?'':' sem'}">${i.e?ico(i.e):'☺'}</span><span class="nome" title="${esc(i.n)}">${esc(i.n)}</span></div><small class="lix-meta">De ${esc(i.delListaNome||'lista excluída')} · apagado em ${quando(i.delEm)}</small><button data-recuperar="${i.id}">↩ Recuperar</button></div>`).join('')}</div>`:'<div class="vazio">Nada na lixeira.</div>'}</div>`;m.hidden=false}
 const quando=t=>{const d=t&&t.toDate?t.toDate():new Date(t||Date.now());return d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};
+function pedirExcluirLista(id){const l=listas.find(x=>x.id===id);if(!l)return;confirmaExcluir=id;const m=$('#modal');
+  m.innerHTML=`<div class="caixa-modal" role="dialog" aria-label="Excluir lista"><div class="modal-topo"><b>🗑 Excluir lista</b><button data-modal-fechar>✕ Fechar</button></div>
+  <div>Tem certeza de que deseja excluir a lista <b>${esc(l.nome)}</b>?<br>Os itens dela vão para a Lixeira.</div>
+  <div class="alerta" style="border:0;padding:0;background:none"><div class="acoes"><button data-modal-fechar>Cancelar</button><button data-xlista-sim style="font-weight:700">Sim, excluir</button></div></div></div>`;m.hidden=false}
 function pedirRestaurar(){const m=$('#modal');const f=finalizada;
   m.innerHTML=`<div class="caixa-modal" role="dialog" aria-label="Restaurar"><div class="modal-topo"><b>↻ Restaurar</b><button data-modal-fechar>✕ Fechar</button></div>`+
   (f?`<div>Voltar para a última versão finalizada, de <b>${quando(f.em)}</b>?<br><br>A ordem, os itens marcados e as listas ativas voltam como estavam. Itens adicionados depois continuam, no topo da lista.</div><div class="alerta" style="border:0;padding:0;background:none"><div class="acoes"><button data-modal-fechar>Cancelar</button><button data-restaurar-sim style="font-weight:700">Sim, restaurar</button></div></div>`
@@ -619,8 +662,8 @@ document.addEventListener('click',e=>{
   const q=b.closest('.quadro'),l=q&&listas.find(x=>x.id===q.dataset.lista);
   if(b.dataset.aviso){aviso(b.dataset.aviso);return}
   if(b.dataset.menu){const id=menuAlvo,tipo=b.dataset.menu;fecharMenu();
-    if(tipo==='derrubar'){if(confirm('Desconectar todo mundo agora?\n\nSó volta a entrar quem abrir a página de novo (pelo link do e-mail).')){if(window.nuvem&&window.nuvem.derrubar)window.nuvem.derrubar();aviso('Todos foram desconectados.')}return}
-    if(tipo==='xlista'){const r=acharItem(id);if(r){confirmaExcluir=r.l.id;render();const qx=document.querySelector(`.quadro[data-lista="${r.l.id}"]`);if(qx)qx.scrollIntoView({behavior:'smooth',block:'center'})}return}
+    if(tipo==='derrubar'){const senha=prompt('Senha para derrubar todos os usuários:');if(senha===null)return;if(senha!=='1862'){aviso('Senha incorreta.');return}if(window.nuvem&&window.nuvem.derrubar)window.nuvem.derrubar();aviso('Todos foram desconectados.');return}
+    if(tipo==='xlista'){const r=acharItem(id);if(r)pedirExcluirLista(r.l.id);return}
     const li=document.querySelector(`.item[data-id="${id}"]`);if(!li)return;
     if(tipo==='nome')editarNome(li.querySelector('.nome'));else if(tipo==='det')editarDet(li.querySelector('[data-det]'));else excluirItem(id);return}
   if(b.hasAttribute('data-lixeira')){lixFiltro='todos';pintarLixeira();return}
@@ -628,14 +671,14 @@ document.addEventListener('click',e=>{
   if(b.dataset.recuperar){recuperar(b.dataset.recuperar);return}
   if(b.hasAttribute('data-restaurar')){pedirRestaurar();return}
   if(b.hasAttribute('data-restaurar-sim')){restaurar();return}
-  if(b.hasAttribute('data-xlista-cancel')){confirmaExcluir=null;render();return}
-  if(b.hasAttribute('data-xlista-sim')){const agora=Date.now();l.itens.forEach(i=>{Object.assign(i,{del:true,delEm:agora,delLista:l.id,delListaNome:l.nome});lixeira.unshift(i)});listas.splice(listas.indexOf(l),1);confirmaExcluir=null;if(addAberto===l.id)fecharAdd();if(buscaListaId===l.id)buscaListaId=null;render();aviso(`Lista ${l.nome} excluída. Os itens estão na Lixeira.`);return}
+  if(b.hasAttribute('data-xlista-sim')){const le=listas.find(x=>x.id===confirmaExcluir);confirmaExcluir=null;$('#modal').hidden=true;if(le){const agora=Date.now();le.itens.forEach(i=>{Object.assign(i,{del:true,delEm:agora,delLista:le.id,delListaNome:le.nome});lixeira.unshift(i)});listas.splice(listas.indexOf(le),1);if(addAberto===le.id)fecharAdd();if(buscaListaId===le.id)buscaListaId=null;render();aviso(`Lista ${le.nome} excluída. Os itens estão na Lixeira.`)}return}
   if(b.dataset.zoom){pref.z=Math.min(1.5,Math.max(.8,Math.round((pref.z+.1*b.dataset.zoom)*10)/10));aplicarPref();render();return}
   if(b.hasAttribute('data-tema')){pref.t=pref.t==='dark'?'light':'dark';aplicarPref();return}
+  if(b.hasAttribute('data-instalar')){if(!promptInstalar)return;promptInstalar.prompt();promptInstalar.userChoice.finally(()=>{promptInstalar=null;$('#instalarLinha').hidden=true});return}
   if(b.hasAttribute('data-emo')){abrirEmo(b.closest('.item').dataset.id);return}
   if(b.dataset.cat){emoCat=+b.dataset.cat;pintarEmo();return}
   if(b.hasAttribute('data-pega')){acharItem(emoAlvo).i.e=b.dataset.pega;$('#modal').hidden=true;render();return}
-  if(b.hasAttribute('data-modal-fechar')){$('#modal').hidden=true;return}
+  if(b.hasAttribute('data-modal-fechar')){confirmaExcluir=null;$('#modal').hidden=true;return}
   if(b.hasAttribute('data-pdf')){if(!temAtiva())return;finalizar();gerarPDF(b);return}
   if(b.hasAttribute('data-pdf-share')){compartilharPDF();return}
   if(b.hasAttribute('data-pdf-baixar')){baixarPDF();return}
@@ -673,7 +716,7 @@ document.addEventListener('input',e=>{if(e.target.id==='bg-in'){busca=e.target.v
   if(!e.target.closest('[data-form]'))return;addTexto=e.target.value;
   const cx=e.target.closest('.add-caixa');const al=cx.querySelector('.alerta');if(al){alertaDup=null;al.remove()}
   cx.querySelector('[data-sug]').innerHTML=sugestHTML(addTexto)});
-document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(menuAlvo){fecharMenu();return}if(confirmaExcluir){confirmaExcluir=null;render();return}if(!$('#modal').hidden){$('#modal').hidden=true;return}if(!$('#impr').hidden){$('#impr').hidden=true;return}
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(menuAlvo){fecharMenu();return}if(!$('#modal').hidden){confirmaExcluir=null;$('#modal').hidden=true;return}if(!$('#impr').hidden){$('#impr').hidden=true;return}
   if(novaListaAberta){novaListaAberta=false;novaListaTexto='';render();return}
   if(buscaListaId){buscaListaId=null;buscaListaTexto='';render();return}
   if(addAberto){fecharAdd();render()}});
@@ -691,7 +734,7 @@ document.addEventListener('submit',e=>{e.preventDefault();
 const pref={z:1,t:'light'};try{Object.assign(pref,JSON.parse(localStorage.getItem('pref-compras')||'{}'))}catch(e){}
 function aplicarPref(){document.documentElement.setAttribute('data-theme',pref.t);document.body.style.zoom=pref.z;$('#tema').innerHTML=pref.t==='dark'?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>':'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';$('#tema').title=pref.t==='dark'?'Mudar para modo claro':'Mudar para modo escuro';try{localStorage.setItem('pref-compras',JSON.stringify(pref))}catch(e){}}
 aplicarPref();
-['impr','modal'].forEach(id=>$('#'+id).addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.hidden=true}));
+['impr','modal'].forEach(id=>$('#'+id).addEventListener('click',e=>{if(e.target===e.currentTarget){if(id==='modal')confirmaExcluir=null;e.currentTarget.hidden=true}}));
 resumo();mostrarMsg('Carregando a lista…');
 </script>
 <script type="module" src="nuvem.js" onerror="mostrarMsg('Não foi possível carregar o app. Confira a internet e abra de novo.')"></script>
