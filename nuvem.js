@@ -14,6 +14,8 @@ function lerCodigo(){
   try{if(c)localStorage.setItem('codigo-compras',c);else c=localStorage.getItem('codigo-compras')}catch(e){}
   return c&&/^[A-Za-z0-9_-]{20,}$/.test(c)?c:null}
 const CODIGO=lerCodigo();
+const MODO_TESTE=new URLSearchParams(location.search).get('teste')==='1';
+window.MODO_TESTE=MODO_TESTE;
 
 if(!CODIGO){mostrarMsg('Abra a lista pelo link do e-mail.<br>Esse link tem o código de acesso.')}
 else iniciar();
@@ -27,9 +29,11 @@ function iniciar(){
   const colL=collection(db,...base,'listas'),colI=collection(db,...base,'itens'),colP=collection(db,...base,'presenca');
   const refFin=doc(db,...base,'estado','finalizada');
   const refRegraDia=doc(db,...base,'estado','regraDia');
+  const refSessao=doc(db,...base,'estado','sessao');
+  const inicioSessao=Date.now();
 
   const dL=new Map(),dI=new Map();
-  let okL=false,okI=false,servidorL=false,semeado=false,aplicando=false,pendRender=false;
+  let okL=false,okI=false,servidorL=false,semeado=false,aplicando=false,pendRender=false,bloqueado=false;
 
   const erro=e=>{console.error(e);
     if(e&&e.code==='permission-denied')mostrarMsg('Este link não tem acesso à lista.<br>Abra de novo pelo link do e-mail.');
@@ -51,6 +55,7 @@ function iniciar(){
     desenhar()}
 
   function desenhar(){
+    if(bloqueado)return;
     if(ocupado()){pendRender=true;return}
     pendRender=false;aplicando=true;
     try{render();if(!$('#modal').hidden&&$('#modal [aria-label="Lixeira"]'))pintarLixeira()}finally{aplicando=false}}
@@ -66,6 +71,11 @@ function iniciar(){
     okI=true;reconstruir()},erro);
   onSnapshot(refFin,s=>{finalizada=s.exists()?s.data({serverTimestamps:'estimate'}):null},()=>{});
   onSnapshot(refRegraDia,s=>{regraDia=s.exists()?s.data():null},()=>{});
+  onSnapshot(refSessao,s=>{
+    if(bloqueado||!s.exists())return;
+    const d=s.data({serverTimestamps:'estimate'}),em=d.em&&d.em.toMillis?d.em.toMillis():0;
+    if(em>inicioSessao){bloqueado=true;mostrarMsg('Você foi desconectado.<br>Peça o link por e-mail para entrar de novo.')}
+  },()=>{});
 
   // Primeira vez: grava as listas iniciais (ids fixos, então dois aparelhos ao mesmo tempo não duplicam)
   function semear(){
@@ -84,6 +94,7 @@ function iniciar(){
   const igual=(a,d,ks)=>!!d&&ks.every(k=>(a[k]??null)===(d[k]??null));
 
   function salvar(){
+    if(MODO_TESTE)return;
     if(aplicando||!okL||!okI||!servidorL&&!dL.size)return;
     const b=writeBatch(db),agora=Date.now(),vistas=new Set();let n=0;
     const gravaI=(i,lista,pos,del)=>{const a=campoI(i,lista,pos,del),d=dI.get(i.id);
@@ -98,7 +109,7 @@ function iniciar(){
   // ---- Presença: quem está com o app aberto e qual item está mexendo ----
   const SID=Math.random().toString(36).slice(2)+Date.now().toString(36);
   let meuEd=null;const pres=new Map();
-  const pulso=()=>setDoc(doc(colP,SID),{visto:serverTimestamp(),editando:meuEd}).catch(()=>{});
+  const pulso=()=>{if(MODO_TESTE)return;setDoc(doc(colP,SID),{visto:serverTimestamp(),editando:meuEd}).catch(()=>{})};
   pulso();setInterval(pulso,20000);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pulso()});
   addEventListener('pagehide',()=>{deleteDoc(doc(colP,SID)).catch(()=>{})});
@@ -115,7 +126,8 @@ function iniciar(){
   window.nuvem={
     salvar,
     editando(id){if((id||null)===meuEd)return;meuEd=id||null;pulso()},
-    finalizar(estado){setDoc(refFin,{...estado,em:serverTimestamp()}).catch(erro)},
-    marcarRegraDia(data){setDoc(refRegraDia,{data,em:serverTimestamp()}).catch(erro)}
+    finalizar(estado){if(MODO_TESTE)return;setDoc(refFin,{...estado,em:serverTimestamp()}).catch(erro)},
+    marcarRegraDia(data){if(MODO_TESTE)return;setDoc(refRegraDia,{data,em:serverTimestamp()}).catch(erro)},
+    derrubar(){if(MODO_TESTE)return;setDoc(refSessao,{em:serverTimestamp()}).catch(erro)}
   };
 }

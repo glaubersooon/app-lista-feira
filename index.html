@@ -6,15 +6,18 @@
   --bg:#ffffff; --tinta:#2b2f33; --suave:#6b7178; --apagado:#a6acb2; --linha:#e8ebee; --fundo-item:#ffffff; --fundo-off:#f3f4f6; --cinza:#f1f3f5; --fundo-quadro:#f6f7f8; --sombra-item:0 1px 2px rgba(30,40,50,.06); --min-borda:#c6ccd2;
   --feira:#4f8a5b; --feira-bg:#edf6ef; --jorge:#4a74a3; --jorge-bg:#ecf2fa; --umb:#8a5d8f; --umb-bg:#f5eff7; --extra:#6b7178; --extra-bg:#f2f3f5;
   --hover:#f6f9fd; --tog-off:#fcecf1; --tog-off-b:#fcecf1; --tog-on:#e8f5eb; --tog-on-b:#e8f5eb; --achado:#fff4c4; --check:#5a9e6c; --pres:#b8487a; --pres-bg:#fcebf2; --barra:#f1f3f5; --toast:#2b2f33; --toast-txt:#ffffff;
+  --barra-forte:#20242b; --barra-forte-txt:#eef1ef; --imprimir:#3f7fe0; --imprimir-txt:#ffffff;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;
   --bg:#141715; --tinta:#eef1ef; --suave:#b3bbb6; --apagado:#6f7772; --linha:#343a37; --fundo-item:#1c201e; --fundo-off:#181b19; --cinza:#1a1d1b; --fundo-quadro:#171a18; --sombra-item:none; --min-borda:#454c48;
   --feira:#7cc184; --feira-bg:#1b271c; --jorge:#7fb3e6; --jorge-bg:#18222c; --umb:#d39ad0; --umb-bg:#2a1d29; --extra:#b3bbb6; --extra-bg:#1e2220;
-  --hover:#1e2833; --tog-off:#2a1d22; --tog-off-b:#4a2f39; --tog-on:#1b2a1e; --tog-on-b:#2f4a34; --achado:#4a3f12; --check:#4fbf6c; --pres:#f06a9e; --pres-bg:#3a1a27; --barra:#252b28; --toast:#eef1ef; --toast-txt:#141715;}}
+  --hover:#1e2833; --tog-off:#2a1d22; --tog-off-b:#4a2f39; --tog-on:#1b2a1e; --tog-on-b:#2f4a34; --achado:#4a3f12; --check:#4fbf6c; --pres:#f06a9e; --pres-bg:#3a1a27; --barra:#252b28; --toast:#eef1ef; --toast-txt:#141715;
+  --barra-forte:#20242b; --barra-forte-txt:#eef1ef; --imprimir:#3f7fe0; --imprimir-txt:#ffffff;}}
 :root[data-theme="dark"]{color-scheme:dark;
   --bg:#141715; --tinta:#eef1ef; --suave:#b3bbb6; --apagado:#6f7772; --linha:#343a37; --fundo-item:#1c201e; --fundo-off:#181b19; --cinza:#1a1d1b; --fundo-quadro:#171a18; --sombra-item:none; --min-borda:#454c48;
   --feira:#7cc184; --feira-bg:#1b271c; --jorge:#7fb3e6; --jorge-bg:#18222c; --umb:#d39ad0; --umb-bg:#2a1d29; --extra:#b3bbb6; --extra-bg:#1e2220;
-  --hover:#1e2833; --tog-off:#2a1d22; --tog-off-b:#4a2f39; --tog-on:#1b2a1e; --tog-on-b:#2f4a34; --achado:#4a3f12; --check:#4fbf6c; --pres:#f06a9e; --pres-bg:#3a1a27; --barra:#252b28; --toast:#eef1ef; --toast-txt:#141715;}
+  --hover:#1e2833; --tog-off:#2a1d22; --tog-off-b:#4a2f39; --tog-on:#1b2a1e; --tog-on-b:#2f4a34; --achado:#4a3f12; --check:#4fbf6c; --pres:#f06a9e; --pres-bg:#3a1a27; --barra:#252b28; --toast:#eef1ef; --toast-txt:#141715;
+  --barra-forte:#20242b; --barra-forte-txt:#eef1ef; --imprimir:#3f7fe0; --imprimir-txt:#ffffff;}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--tinta);font-family:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;font-size:16px;line-height:1.4;padding-inline:16px;padding-block:0}
 .pagina{max-width:1400px;margin:0 auto;padding-block:20px 120px;display:flex;flex-direction:column;gap:20px}
@@ -45,7 +48,7 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .quadro.min .tog{background:var(--tog-on);border-color:var(--tog-on-b)}
 .tog{grid-area:botao;font-size:14px;min-height:36px;min-width:136px;padding:4px 12px;background:var(--bg);white-space:nowrap;justify-content:center}
 @container (max-width:560px){.quadro.min .quadro-topo{grid-template-columns:minmax(0,auto) auto 1fr auto;grid-template-areas:"nome conta . botao" "fora fora fora fora";justify-items:start}.quadro.min .tog{justify-self:end}}
-@container (max-width:390px){.quadro .quadro-topo,.quadro.min .quadro-topo{grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;grid-template-areas:"nome nome botao" "conta fora fora";justify-items:start}.tog{justify-self:end}}
+@container (max-width:390px){.quadro .quadro-topo,.quadro.min .quadro-topo{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"nome conta botao" "fora fora fora";justify-items:start}.tog{justify-self:end}}
 .titulo-linha{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;min-width:0}
 .quadro h2{margin:0;font-size:20px;color:var(--cor)}
 .conta{font-size:16px;color:var(--suave)}
@@ -67,7 +70,7 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .item{display:flex;align-items:center;gap:8px;box-shadow:var(--sombra-item);background:var(--fundo-item);border:1px solid var(--linha);border-radius:10px;padding:4px 6px;min-height:46px;transition:background .12s,border-color .12s;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .item .ck{width:30px;height:30px;min-height:30px;padding:0;border-radius:7px;justify-content:center;flex:none;background:var(--check);border-color:var(--check);color:#fff;font-size:17px;font-weight:700}
 .item .nome{flex:1;min-width:0;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media (min-width:700px){.quadro-topo h2{white-space:normal;overflow:visible;text-overflow:clip}.item .nome{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word}}
+@media (min-width:700px){.item .nome{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word}}
 .item .alca{color:var(--apagado);font-size:22px;letter-spacing:-3px;padding:0 2px;flex:none}
 .det{flex:none;max-width:42%;min-width:72px;min-height:32px;border:1px dashed var(--linha);border-radius:8px;padding:3px 8px;font-size:14px;background:var(--bg);justify-content:center;overflow-wrap:anywhere}
 .det.vazio-d{color:var(--apagado)}
@@ -146,10 +149,10 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .quadro.min h2{color:color-mix(in srgb,var(--cor) 60%,var(--suave))}
 .fora{font-size:14px;font-weight:700;color:var(--suave);background:var(--bg);border:1px solid var(--linha);border-radius:999px;padding:2px 10px;white-space:nowrap}
 .nova{border:1.5px dashed var(--min-borda);border-radius:16px;min-height:64px;font-size:18px;justify-content:center;gap:10px;width:100%;background:transparent;color:var(--suave)}
-.rodape{position:fixed;left:0;right:0;bottom:0;background:var(--barra);border-top:0;box-shadow:0 -3px 10px rgba(0,0,0,.08);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+.rodape{position:fixed;left:0;right:0;bottom:0;background:var(--barra-forte);border-top:0;box-shadow:0 -3px 10px rgba(0,0,0,.08);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
 .rodape-in{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.vai{flex:1 1 260px;font-size:17px}
-.vai b{color:var(--tinta)}
+.vai{flex:1 1 260px;font-size:17px;color:var(--barra-forte-txt)}
+.vai b{color:var(--barra-forte-txt)}
 .principal{background:var(--tinta);color:var(--bg);border-color:var(--tinta);font-weight:700}
 .toast{z-index:30;position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--toast);color:var(--toast-txt);padding:12px 18px;border-radius:10px;font-size:16px;max-width:calc(100% - 32px)}
 @media (max-width:520px){h1{font-size:24px}}
@@ -185,9 +188,10 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .menu-item button{justify-content:flex-start;border-color:transparent;font-size:17px}
 .menu-item button:hover{background:var(--cinza)}
 .menu-item .perigo{color:#b3261e}
-.lix-linha{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 6px 6px 12px;border-top:1px solid var(--linha);font-size:17px}
+.lix-linha{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-top:1px solid var(--linha);font-size:17px}
+.lix-linha .lix-topo{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lix-linha .lix-nome{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lix-linha small{color:var(--suave);font-size:14px}
-.lix-linha span{flex:1;min-width:0}
 .sugest .lix-linha:first-child{border-top:0}
 .lix-linha button{flex:none;font-size:15px}
 .msg{border:1px dashed var(--linha);border-radius:16px;padding:24px;text-align:center;font-size:18px;color:var(--suave);width:100%}
@@ -209,7 +213,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .topo-acoes button,.acess button,.rodape button,.alerta button,.modal-topo button,.impr-barra button,.cats-mercado button,.sugest button,.bg-campo button{border-color:transparent;background:var(--cinza)}
 .topo-acoes button:hover,.acess button:hover,.rodape button:hover,.alerta button:hover,.modal-topo button:hover,.cats-mercado button:hover{background:var(--linha)}
 .rodape [data-ver]{background:var(--bg)}
-.rodape .principal{background:var(--tinta);color:var(--bg)}
+.rodape .principal{background:var(--imprimir);color:var(--imprimir-txt)}
 .rodape .zapbt{background:var(--check);border-color:var(--check);color:#fff}
 .cats-mercado button.on{background:var(--tinta);color:var(--bg)}
 .presenca,.alerta,.fora{border:0}
@@ -257,7 +261,8 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 </style>
 
 <div class="pagina">
-  <div class="acess" aria-label="Acessibilidade"><button data-zoom="-1" aria-label="Diminuir tamanho">A−</button><button data-zoom="1" aria-label="Aumentar tamanho">A+</button><button data-tema id="tema" aria-label="Alternar modo claro e escuro">☾</button></div>
+  <div class="acess" aria-label="Acessibilidade"><button data-zoom="-1" aria-label="Diminuir tamanho">A−</button><button data-zoom="1" aria-label="Aumentar tamanho">A+</button><button data-tema id="tema" aria-label="Alternar modo claro e escuro">☾<span id="badgeTeste" hidden title="Versão de teste: não salva nada" style="font-weight:800;color:#c0392b;margin-left:3px">T</span></button></div>
+  <script>if(new URLSearchParams(location.search).get('teste')==='1')document.getElementById('badgeTeste').hidden=false</script>
   <header>
     <div>
       <h1>Compras da semana</h1>
@@ -410,7 +415,7 @@ function render(){
     q.style.setProperty('--cor',`var(--${l.cor})`);q.style.setProperty('--cor-bg',`var(--${l.cor}-bg)`);
     q.innerHTML=`<div class="quadro-topo">
       <h2 title="${esc(l.nome)}">${esc(l.nome)}</h2><span class="conta">${contar(l)}</span>${l.min?'<span class="fora">fora da impressão</span>':''}
-      <div class="topo-dir"><button class="tog" data-min><span class="chev" aria-hidden="true">▾</span>${l.min?'Ativar lista':'Desativar lista'}</button>${l.fixa?'':'<button class="xlista" data-xlista aria-label="Excluir lista" title="Excluir lista">✕</button>'}</div></div>
+      <div class="topo-dir"><button class="tog" data-min><span class="chev" aria-hidden="true">▾</span>${l.min?'Ativar lista':'Desativar lista'}</button></div></div>
       ${confirmaExcluir===l.id?'<div class="alerta" role="alert" style="margin:10px 16px"><div><b>Tem certeza de que deseja excluir esta lista?</b><br>Os itens dela vão para a Lixeira.</div><div class="acoes"><button data-xlista-cancel>Cancelar</button><button data-xlista-sim style="font-weight:700">Sim, excluir</button></div></div>':''}
       ${l.min?'':`<div class="corpo">${tudoHTML(l)}${addHTML(l)}
       ${mostrarDica()&&l.itens.length>1?'<div class="dica-arrastar">✋ Segure um item e arraste para mudar a ordem</div>':''}
@@ -451,15 +456,15 @@ function aplicarBuscaLista(){document.querySelectorAll('.item.achado-lista').for
   const l=listas.find(x=>x.id===buscaListaId);if(!l)return;
   l.itens.forEach(i=>{if(norm(i.n).includes(q)){const li=document.querySelector(`.item[data-id="${i.id}"]`);if(li)li.classList.add('achado-lista')}})}
 function montar(g,cards){const n=Math.max(1,Math.floor((g.clientWidth+20)/380));const cols=[...Array(n)].map(()=>{const c=document.createElement('div');c.className='col';g.appendChild(c);return c});
-  let ult=0;cards.forEach(c=>{let k=ult;for(let j=ult;j<n;j++)if(cols[j].offsetHeight<cols[k].offsetHeight)k=j;cols[k].appendChild(c);ult=k})}
+  cards.forEach((c,i)=>cols[i%n].appendChild(c))}
 let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{const g=$('#grade');if(Math.max(1,Math.floor((g.clientWidth+20)/380))!==g.children.length&&!document.body.classList.contains('arrastando'))render()},200)});
-let flut=null,px=0,py=0,flutX=0;
+let flut=null,px=0,py=0,flutOffX=0;
 const pos=e=>{const p=e.touches?e.touches[0]:e;if(p){px=p.clientX;py=p.clientY}if(flut)moverFlut()};
 ['pointermove','mousemove','touchmove','pointerdown','touchstart'].forEach(t=>document.addEventListener(t,pos,{passive:true,capture:true}));
-function iniciaFlut(el){pararFlut();const r=el.getBoundingClientRect(),z=pref.z||1;flut=el.cloneNode(true);flut.classList.remove('arrasto','sortable-chosen','flash','editando','achado');flut.classList.add('flutua');flut.style.width=r.width/z+'px';flutX=r.left/z;document.body.appendChild(flut);moverFlut()}
+function iniciaFlut(el){pararFlut();const r=el.getBoundingClientRect(),z=pref.z||1;flut=el.cloneNode(true);flut.classList.remove('arrasto','sortable-chosen','flash','editando','achado');flut.classList.add('flutua');flut.style.width=r.width/z+'px';flutOffX=px/z-r.left/z;document.body.appendChild(flut);moverFlut()}
 function iniciaFlutLista(el){pararFlut();const h2=el.querySelector('.quadro-topo h2'),r=el.getBoundingClientRect(),z=pref.z||1;
-  flut=document.createElement('div');flut.className='flutua flutua-lista';flut.style.width=Math.min(r.width,260)/z+'px';flut.textContent=h2?h2.textContent:'';flutX=r.left/z;document.body.appendChild(flut);moverFlut()}
-function moverFlut(){const z=pref.z||1;flut.style.left=flutX+'px';flut.style.top=(py/z-flut.offsetHeight/2)+'px'}
+  flut=document.createElement('div');flut.className='flutua flutua-lista';flut.style.width=Math.min(r.width,260)/z+'px';flut.textContent=h2?h2.textContent:'';flutOffX=px/z-r.left/z;document.body.appendChild(flut);moverFlut()}
+function moverFlut(){const z=pref.z||1;flut.style.left=(px/z-flutOffX)+'px';flut.style.top=(py/z-flut.offsetHeight/2)+'px'}
 function pararFlut(){if(flut){flut.remove();flut=null}}
 function lerDOM(){const todos={};listas.forEach(l=>l.itens.forEach(i=>todos[i.id]=i));
   document.querySelectorAll('[data-ul]').forEach(ul=>{const l=listas.find(x=>x.id===ul.dataset.ul);if(l)l.itens=[...ul.children].map(li=>todos[li.dataset.id]).filter(Boolean)})}
@@ -550,9 +555,21 @@ function editarNomeLista(h2){const q=h2.closest('.quadro'),l=listas.find(x=>x.id
 const toque=()=>matchMedia('(hover: none)').matches;
 document.addEventListener('dblclick',e=>{const h2=e.target.closest('.quadro-topo h2');if(h2){editarNomeLista(h2);return}
   const sp=e.target.closest('.itens .nome');if(!sp)return;if(toque())abrirMenu(sp.closest('.item').dataset.id,e.clientX,e.clientY);else editarNome(sp)});
-document.addEventListener('contextmenu',e=>{const li=e.target.closest('.itens .item');if(!li)return;e.preventDefault();if(toque()||document.body.classList.contains('arrastando'))return;abrirMenu(li.dataset.id,e.clientX,e.clientY)});
+document.addEventListener('contextmenu',e=>{
+  if(toque()||document.body.classList.contains('arrastando'))return;
+  const li=e.target.closest('.itens .item');
+  if(li){e.preventDefault();abrirMenu(li.dataset.id,e.clientX,e.clientY);return}
+  const topo=e.target.closest('.quadro-topo');
+  if(topo){const q=topo.closest('.quadro'),l=q&&listas.find(x=>x.id===q.dataset.lista);
+    if(l&&!l.fixa){e.preventDefault();confirmaExcluir=confirmaExcluir===l.id?null:l.id;render()}
+    return}
+  if(e.target.closest('header')||e.target.closest('#presenca')){e.preventDefault();abrirMenuTopo(e.clientX,e.clientY)}
+});
 function abrirMenu(id,x,y){fecharMenu();menuAlvo=id;const r=acharItem(id);const m=document.createElement('div');m.className='menu-item';m.id='menuItem';m.setAttribute('role','menu');
   m.innerHTML='<button data-menu="nome">✏️ Editar nome</button><button data-menu="det">📝 Editar detalhe</button><button data-menu="excluir" class="perigo">🗑 Excluir item</button>'+(r&&!r.l.fixa?'<button data-menu="xlista" class="perigo">🗑 Excluir lista inteira</button>':'');
+  document.body.appendChild(m);const z=pref.z||1;m.style.left=Math.max(8,Math.min(x/z,innerWidth/z-m.offsetWidth-8))+'px';m.style.top=Math.max(8,Math.min(y/z,innerHeight/z-m.offsetHeight-8))+'px'}
+function abrirMenuTopo(x,y){fecharMenu();menuAlvo='__topo__';const m=document.createElement('div');m.className='menu-item';m.id='menuItem';m.setAttribute('role','menu');
+  m.innerHTML='<button data-menu="derrubar" class="perigo">🚪 Derrubar todos os usuários</button>';
   document.body.appendChild(m);const z=pref.z||1;m.style.left=Math.max(8,Math.min(x/z,innerWidth/z-m.offsetWidth-8))+'px';m.style.top=Math.max(8,Math.min(y/z,innerHeight/z-m.offsetHeight-8))+'px'}
 function fecharMenu(){const m=$('#menuItem');if(m)m.remove();menuAlvo=null}
 addEventListener('scroll',()=>{if(menuAlvo)fecharMenu()},{passive:true});
@@ -564,7 +581,7 @@ function pintarLixeira(){const m=$('#modal');const nomes=new Map(listas.map(l=>[
   const vis=lixeira.filter(i=>lixFiltro==='todos'||i.delLista===lixFiltro).sort((a,b)=>(b.delEm||0)-(a.delEm||0));
   m.innerHTML=`<div class="caixa-modal" role="dialog" aria-label="Lixeira"><div class="modal-topo"><b>🗑 Lixeira</b><button data-modal-fechar>✕ Fechar</button></div>
   <div class="cats-mercado"><button data-lixf="todos" class="${lixFiltro==='todos'?'on':''}">Todos</button>${[...nomes].map(([id,n])=>`<button data-lixf="${esc(id)}" class="${lixFiltro===id?'on':''}">${esc(n)}</button>`).join('')}</div>
-  ${vis.length?`<div class="sugest">${vis.map(i=>`<div class="lix-linha"><span>${ico(i.e)} ${esc(i.n)} <small>de ${esc(i.delListaNome||'')}</small></span><button data-recuperar="${i.id}">↩ Recuperar</button></div>`).join('')}</div>`:'<div class="vazio">Nada na lixeira.</div>'}</div>`;m.hidden=false}
+  ${vis.length?`<div class="sugest">${vis.map(i=>`<div class="lix-linha"><div class="lix-topo"><span class="lix-nome">${ico(i.e)} ${esc(i.n)}</span><button data-recuperar="${i.id}">↩ Recuperar</button></div><small>de ${esc(i.delListaNome||'')}</small></div>`).join('')}</div>`:'<div class="vazio">Nada na lixeira.</div>'}</div>`;m.hidden=false}
 const quando=t=>{const d=t&&t.toDate?t.toDate():new Date(t||Date.now());return d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};
 function pedirRestaurar(){const m=$('#modal');const f=finalizada;
   m.innerHTML=`<div class="caixa-modal" role="dialog" aria-label="Restaurar"><div class="modal-topo"><b>↻ Restaurar</b><button data-modal-fechar>✕ Fechar</button></div>`+
@@ -602,6 +619,7 @@ document.addEventListener('click',e=>{
   const q=b.closest('.quadro'),l=q&&listas.find(x=>x.id===q.dataset.lista);
   if(b.dataset.aviso){aviso(b.dataset.aviso);return}
   if(b.dataset.menu){const id=menuAlvo,tipo=b.dataset.menu;fecharMenu();
+    if(tipo==='derrubar'){if(confirm('Desconectar todo mundo agora?\n\nSó volta a entrar quem abrir a página de novo (pelo link do e-mail).')){if(window.nuvem&&window.nuvem.derrubar)window.nuvem.derrubar();aviso('Todos foram desconectados.')}return}
     if(tipo==='xlista'){const r=acharItem(id);if(r){confirmaExcluir=r.l.id;render();const qx=document.querySelector(`.quadro[data-lista="${r.l.id}"]`);if(qx)qx.scrollIntoView({behavior:'smooth',block:'center'})}return}
     const li=document.querySelector(`.item[data-id="${id}"]`);if(!li)return;
     if(tipo==='nome')editarNome(li.querySelector('.nome'));else if(tipo==='det')editarDet(li.querySelector('[data-det]'));else excluirItem(id);return}
@@ -610,7 +628,6 @@ document.addEventListener('click',e=>{
   if(b.dataset.recuperar){recuperar(b.dataset.recuperar);return}
   if(b.hasAttribute('data-restaurar')){pedirRestaurar();return}
   if(b.hasAttribute('data-restaurar-sim')){restaurar();return}
-  if(b.hasAttribute('data-xlista')){confirmaExcluir=confirmaExcluir===l.id?null:l.id;render();return}
   if(b.hasAttribute('data-xlista-cancel')){confirmaExcluir=null;render();return}
   if(b.hasAttribute('data-xlista-sim')){const agora=Date.now();l.itens.forEach(i=>{Object.assign(i,{del:true,delEm:agora,delLista:l.id,delListaNome:l.nome});lixeira.unshift(i)});listas.splice(listas.indexOf(l),1);confirmaExcluir=null;if(addAberto===l.id)fecharAdd();if(buscaListaId===l.id)buscaListaId=null;render();aviso(`Lista ${l.nome} excluída. Os itens estão na Lixeira.`);return}
   if(b.dataset.zoom){pref.z=Math.min(1.5,Math.max(.8,Math.round((pref.z+.1*b.dataset.zoom)*10)/10));aplicarPref();render();return}

@@ -41,7 +41,7 @@ jobs:
           if [ -z "$DIA" ]; then
             if [ "$(TZ=America/Sao_Paulo date +%u)" = "2" ]; then DIA=terca; else DIA=sexta; fi
           fi
-          if [ "$DIA" = "terca" ]; then ASSUNTO="Compra Sr. Jorge, terça"; else ASSUNTO="Compra Feira, Sr. Jorge e/ou outros, sexta"; fi
+          if [ "$DIA" = "terca" ]; then ASSUNTO="Lista Sr. Jorge"; else ASSUNTO="Lista Feira"; fi
           LINK="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}"
           jq -n --arg u "$PUBLIC_KEY" --arg k "$PRIVATE_KEY" --arg para "$PARA" --arg assunto "$ASSUNTO" --arg link "$LINK" \
             '{service_id:"service_0xqf97q",template_id:"template_bbidvdd",user_id:$u,accessToken:$k,template_params:{para:$para,assunto:$assunto,link:$link}}' > corpo.json
