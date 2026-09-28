@@ -39,7 +39,8 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .grade{display:flex;gap:20px;align-items:flex-start}
 .col{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px}
 .quadro{border:1.5px solid color-mix(in srgb,var(--cor) 45%,var(--bg));border-radius:16px;background:var(--fundo-quadro);overflow:hidden;transition:border-color .15s;container-type:inline-size}
-.quadro-topo{background:var(--cinza);padding:10px 12px 10px 16px;display:grid;grid-template-columns:minmax(0,auto) auto 1fr auto auto;grid-template-areas:"nome conta . fora botao";align-items:center;gap:4px 10px;border-bottom:1px solid var(--linha)}
+.quadro-topo{background:var(--cinza);padding:10px 12px 10px 16px;display:grid;grid-template-columns:minmax(0,auto) auto 1fr auto auto;grid-template-areas:"nome conta . fora botao";align-items:center;gap:4px 10px;border-bottom:1px solid var(--linha);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.quadro-topo input{user-select:text;-webkit-user-select:text}
 .quadro-topo h2{grid-area:nome;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:100%}
 .quadro-topo .conta{grid-area:conta;white-space:nowrap}
 .quadro-topo .fora{grid-area:fora}
@@ -50,9 +51,9 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 @keyframes gira{from{transform:rotate(0)}to{transform:rotate(180deg)}}
 .quadro .tog{background:color-mix(in srgb,var(--tog-off) 65%,var(--fundo-quadro));border-color:transparent;color:color-mix(in srgb,var(--pres) 60%,var(--suave))}
 .quadro.min .tog{background:color-mix(in srgb,var(--tog-on) 65%,var(--fundo-quadro));border-color:transparent;color:color-mix(in srgb,var(--check) 60%,var(--suave))}
-.tog{grid-area:botao;font-size:14px;min-height:36px;min-width:136px;padding:4px 12px;background:var(--bg);white-space:nowrap;justify-content:center}
+.tog{grid-area:botao;font-size:13.5px;min-height:36px;min-width:0;padding:4px 10px;background:var(--bg);white-space:nowrap;justify-content:center}
 @container (max-width:560px){.quadro.min .quadro-topo{grid-template-columns:minmax(0,auto) auto 1fr auto;grid-template-areas:"nome conta . botao" "fora fora fora fora";justify-items:start}.quadro.min .tog{justify-self:end}}
-@container (max-width:460px){.quadro .quadro-topo,.quadro.min .quadro-topo{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nome conta" "botao botao" "fora fora";justify-items:start;row-gap:6px}}
+@container (max-width:385px){.quadro .quadro-topo,.quadro.min .quadro-topo{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nome conta" "botao botao" "fora fora";justify-items:start;row-gap:6px}}
 .titulo-linha{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;min-width:0}
 .quadro h2{margin:0;font-size:20px;font-weight:800;color:var(--cor)}
 .conta{font-size:13px;color:var(--suave);font-weight:500}
@@ -155,7 +156,8 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .folha li.arrasto>*{visibility:hidden}
 .quadro.arrasto{background:var(--cinza)!important;border:1.5px dashed var(--apagado)!important;box-shadow:none}
 .quadro.arrasto>*{visibility:hidden}
-.quadro.quadro-troca{outline:2px dashed var(--cor,var(--apagado));outline-offset:-2px}
+.quadro.quadro-troca{background:var(--cinza)!important;border:1.5px dashed var(--apagado)!important;box-shadow:none;outline:none}
+.quadro.quadro-troca>*{visibility:hidden}
 .quadro.min{border-style:dashed;border-color:var(--min-borda)}
 .quadro.min .quadro-topo{background:var(--fundo-off);border-bottom:none}
 .quadro.min h2{color:color-mix(in srgb,var(--cor) 60%,var(--suave))}
@@ -176,6 +178,9 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .tut-item-migra{animation:tut-migra 3.2s ease-in-out infinite}
 .tut-item-sobe{animation:tut-sobe 3.2s ease-in-out infinite}
 .tut-item-desce{animation:tut-desce 3.2s ease-in-out infinite}
+@keyframes tut-seta-desce{0%,15%{transform:translateY(0)}50%{transform:translateY(8px)}85%,100%{transform:translateY(0)}}
+.seta-imprimir{animation:tut-seta-desce 1.3s ease-in-out infinite}
+.balao-imprimir{bottom:170px}
 .balao-tutorial{position:fixed;left:50%;bottom:170px;transform:translateX(-50%);z-index:35;background:var(--bg);border:1px solid var(--linha);border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.22);padding:16px;max-width:300px;width:calc(100% - 32px);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;animation:crescer .2s cubic-bezier(.2,.8,.2,1)}
 .balao-tutorial svg{width:100%;height:auto}
 .balao-tutorial p{margin:0;font-size:15px;color:var(--tinta)}
@@ -274,11 +279,12 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
   .acess button{min-height:26px;padding:1px 7px;font-size:12px}
   .topo-acoes{order:2;margin-left:0;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .topo-acoes:has(.presenca:not([hidden])){grid-template-columns:auto repeat(3,1fr)}
-  .topo-acoes button{justify-content:center}
+  .topo-acoes button{justify-content:center;font-size:12.5px;padding:4px 6px;gap:3px;white-space:nowrap}
   .oculta-cel{display:none}
-  .presenca{justify-content:center;padding:6px;min-width:44px}
+  .presenca{justify-content:center;padding:6px 8px;min-width:0}
   .presenca-ico{display:block}
   .presenca-txt{display:none}
+  .presenca .ponto{display:none}
   .rodape{padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px))}
   .rodape-in{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 8px}
   .rodape-in [data-ver]{grid-column:1/-1;min-height:38px!important}
@@ -487,7 +493,7 @@ function render(){
   if(novaListaAberta){const inp=$('#novaLista-nome');if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
   if(buscaListaId){const inp=$('#buscaLista-'+buscaListaId);if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
   g.style.minHeight='';if(Math.abs(scrollY-y0)>1)scrollTo(0,y0);
-  resumo();if(previaAberta)previa();aplicarBusca();aplicarBuscaLista();
+  resumo();if(previaAberta)previa();aplicarBusca();aplicarBuscaLista();mostrarTutorialImprimir();
   if(window.nuvem)nuvem.salvar();
 }
 const marcaEd=id=>{if(window.nuvem)nuvem.editando(id)};
@@ -502,8 +508,10 @@ function aplicarBuscaLista(){document.querySelectorAll('.item.achado-lista').for
   const l=listas.find(x=>x.id===buscaListaId);if(!l)return;
   l.itens.forEach(i=>{if(norm(i.n).includes(q)){const li=document.querySelector(`.item[data-id="${i.id}"]`);if(li)li.classList.add('achado-lista')}})}
 function montar(g,cards){const n=Math.max(1,Math.floor((g.clientWidth+20)/380));const cols=[...Array(n)].map(()=>{const c=document.createElement('div');c.className='col';g.appendChild(c);return c});
-  const porColuna=Math.ceil(cards.length/n)||1;
-  cards.forEach((c,i)=>cols[Math.min(n-1,Math.floor(i/porColuna))].appendChild(c))}
+  // Cada card entra na coluna mais baixa no momento (tipo mosaico): mantém a ordem Feira, Sr. Jorge,
+  // Umbanda, Mercado, Criar nova lista, preenchendo a coluna do lado quando a atual já está mais alta.
+  const alturas=new Array(n).fill(0);
+  cards.forEach(c=>{let k=0;for(let j=1;j<n;j++)if(alturas[j]<alturas[k])k=j;cols[k].appendChild(c);alturas[k]+=c.offsetHeight+20})}
 let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{const g=$('#grade');if(Math.max(1,Math.floor((g.clientWidth+20)/380))!==g.children.length&&!document.body.classList.contains('arrastando'))render()},200)});
 let flut=null,px=0,py=0,flutOffX=0;
 const pos=e=>{const p=e.touches?e.touches[0]:e;if(p){px=p.clientX;py=p.clientY}if(flut)moverFlut()};
@@ -556,9 +564,9 @@ let dicaOk=false;try{dicaOk=localStorage.getItem('dica-arrastar')==='1'}catch(e)
 function mostrarDica(){return !dicaOk&&matchMedia('(hover:none)').matches}
 function dicaVista(){if(dicaOk)return;dicaOk=true;try{localStorage.setItem('dica-arrastar','1')}catch(e){}}
 // Tutorial (uma vez só): ao interagir com um item pela primeira vez, mostra como arrastar para outra lista.
-let tutorialOk=false;try{tutorialOk=localStorage.getItem('tutorial-arrastar')==='1'}catch(e){}
+let tutorialOk=false;try{tutorialOk=localStorage.getItem('tutorial-arrastar-v2')==='1'}catch(e){}
 function mostrarTutorialArrastar(){
-  if(tutorialOk)return;tutorialOk=true;try{localStorage.setItem('tutorial-arrastar','1')}catch(e){}
+  if(tutorialOk)return;tutorialOk=true;try{localStorage.setItem('tutorial-arrastar-v2','1')}catch(e){}
   const b=document.createElement('div');b.className='balao-tutorial';b.setAttribute('role','dialog');b.setAttribute('aria-label','Dica: arrastar itens');
   b.innerHTML=`<button class="fechar-tutorial" aria-label="Fechar">✕</button>
     <svg viewBox="0 0 240 108" aria-hidden="true" font-family="Atkinson Hyperlegible,Verdana,sans-serif">
@@ -596,6 +604,30 @@ function mostrarTutorialArrastar(){
   b.querySelector('.ok-tutorial').addEventListener('click',fechar);
 }
 document.addEventListener('click',e=>{if(e.target.closest('.itens .item'))mostrarTutorialArrastar()},{capture:true});
+// Tutorial (uma vez só, depois que a lista carrega de verdade): seta apontando pro botão de imprimir/PDF no rodapé.
+let tutorialImprOk=false;try{tutorialImprOk=localStorage.getItem('tutorial-imprimir')==='1'}catch(e){}
+function mostrarTutorialImprimir(){
+  if(tutorialImprOk)return;tutorialImprOk=true;try{localStorage.setItem('tutorial-imprimir','1')}catch(e){}
+  setTimeout(()=>{
+    const alvo=document.querySelector('.rodape .principal');if(!alvo)return;
+    const b=document.createElement('div');b.className='balao-tutorial balao-imprimir';b.setAttribute('role','dialog');b.setAttribute('aria-label','Dica: imprimir ou gerar PDF');
+    b.innerHTML=`<button class="fechar-tutorial" aria-label="Fechar">✕</button>
+      <svg viewBox="0 0 100 52" aria-hidden="true">
+        <path class="seta-imprimir" d="M50 3v30" stroke="var(--tinta)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path class="seta-imprimir" d="M37 26l13 13 13-13" stroke="var(--tinta)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <p>Toque aqui para imprimir ou gerar o PDF da lista.</p>
+      <button class="ok-tutorial">Entendi</button>`;
+    document.body.appendChild(b);
+    const posicionar=()=>{const r=alvo.getBoundingClientRect(),z=pref.z||1,bw=b.offsetWidth;
+      b.style.left=Math.max(8,Math.min((r.left+r.width/2)/z-bw/2,innerWidth/z-bw-8))+'px';
+      b.style.bottom=((innerHeight-r.top)/z+12)+'px';b.style.transform='none'};
+    posicionar();
+    const fechar=()=>{b.remove();removeEventListener('resize',posicionar)};
+    addEventListener('resize',posicionar);
+    b.querySelector('.fechar-tutorial').addEventListener('click',fechar);
+    b.querySelector('.ok-tutorial').addEventListener('click',fechar);
+  },1500)}
 function temAtiva(){if(listas.some(l=>!l.min))return true;aviso('Ative pelo menos uma lista para imprimir ou enviar.');return false}
 // Impressão: usa a mesma folha A4 da prévia. Ctrl+P também funciona.
 let imprAuto=false,tituloApp=document.title;
