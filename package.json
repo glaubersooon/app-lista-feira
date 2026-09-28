@@ -1,0 +1,11 @@
+{
+  "name": "app-lista-feira",
+  "private": true,
+  "description": "Testes locais (jsdom) do app Lista de Compras. Não afeta o app em si, que não usa build/bundler.",
+  "scripts": {
+    "test": "node tests/teste.js"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.0"
+  }
+}
