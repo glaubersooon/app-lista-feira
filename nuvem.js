@@ -42,7 +42,7 @@ function iniciar(){
   function reconstruir(){
     if(!okL||!okI)return;
     if(!dL.size&&!servidorL)return; // aparelho novo sem nada guardado: espera o servidor
-    const ls=[...dL].map(([id,d])=>({id,nome:d.nome||'Lista',cor:d.cor||'extra',min:!!d.min,tudo:!!d.tudo,org:!!d.org,fixa:!!d.fixa,_p:d.pos??0,itens:[]}))
+    const ls=[...dL].map(([id,d])=>({id,nome:d.nome||'Lista',cor:d.cor||'extra',min:!!d.min,tudo:!!d.tudo,org:!!d.org,fixa:!!d.fixa,col:d.col??null,_p:d.pos??0,itens:[]}))
       .sort((a,b)=>a._p-b._p||a.id.localeCompare(b.id));
     const porId=new Map(ls.map(l=>[l.id,l])),lix=[];
     [...dI].sort((a,b)=>(a[1].pos??0)-(b[1].pos??0)||(b[1].criado??0)-(a[1].criado??0)).forEach(([id,d])=>{
@@ -81,7 +81,7 @@ function iniciar(){
 
   // ---- Dados: da tela para o Firestore (grava só o que mudou) ----
   const KI=['n','e','det','off','lista','pos','del','delEm','delLista','delListaNome'];
-  const campoL=(l,pos)=>({nome:l.nome,cor:l.cor||'extra',min:!!l.min,tudo:!!l.tudo,org:!!l.org,fixa:!!l.fixa,pos});
+  const campoL=(l,pos)=>({nome:l.nome,cor:l.cor||'extra',min:!!l.min,tudo:!!l.tudo,org:!!l.org,fixa:!!l.fixa,col:l.col??null,pos});
   const campoI=(i,lista,pos,del)=>del
     ?{n:i.n,e:i.e||'',det:i.det||'',off:!!i.off,lista,pos,del:true,delEm:i.delEm||Date.now(),delLista:i.delLista||lista,delListaNome:i.delListaNome||''}
     :{n:i.n,e:i.e||'',det:i.det||'',off:!!i.off,lista,pos,del:false};

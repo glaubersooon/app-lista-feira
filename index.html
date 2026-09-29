@@ -516,18 +516,26 @@ function aplicarBusca(){document.querySelectorAll('.item.achado').forEach(li=>li
 function aplicarBuscaLista(){document.querySelectorAll('.item.achado-lista').forEach(li=>li.classList.remove('achado-lista'));if(!buscaListaId||!buscaListaTexto)return;const q=norm(buscaListaTexto);if(!q)return;
   const l=listas.find(x=>x.id===buscaListaId);if(!l)return;
   l.itens.forEach(i=>{if(norm(i.n).includes(q)){const li=document.querySelector(`.item[data-id="${i.id}"]`);if(li)li.classList.add('achado-lista')}})}
-let colunaDeLista={}; // id da lista -> índice da coluna. Fica de pé entre renders (só o carregamento
-// da página zera), pra ativar/desativar ou editar uma lista não fazer as outras pularem de coluna.
+let colunaDeLista={}; // só pro card "_nova_" (não é lista de verdade, não é salvo na nuvem).
+// Coluna "de casa" de cada lista original — usada só na primeira vez que a lista ganha uma
+// coluna (l.col ainda null), pra não depender da altura do card no momento (que muda conforme
+// a lista está ativa/desativada, ex.: regra do dia de terça/sexta). Depois disso l.col fica
+// salvo na nuvem (nuvem.js) e passa a mandar sempre, em qualquer aparelho.
+const COLUNA_PADRAO={feira:0,jorge:1,umb:2,merc:2,_nova_:2};
 function montar(g,cards){const n=Math.max(1,Math.floor((g.clientWidth+20)/380));const cols=[...Array(n)].map(()=>{const c=document.createElement('div');c.className='col';g.appendChild(c);return c});
-  // Mosaico: cada card guarda a coluna em que caiu da primeira vez (por id), então continua ali
+  // Mosaico: cada lista guarda a coluna em que caiu (l.col, salvo na nuvem), então continua ali
   // enquanto o número de colunas não mudar — mesmo que outra lista seja ativada/desativada do lado.
-  // Só quando o número de colunas muda (redimensionar a janela) é que tudo é recalculado do zero.
-  if(n!==montar.ultimoN){colunaDeLista={};montar.ultimoN=n}
+  // Só quando o número de colunas muda de verdade (redimensionar a janela) é que tudo é recalculado.
+  if(n!==montar.ultimoN){listas.forEach(l=>l.col=null);colunaDeLista={};montar.ultimoN=n}
   const alturas=new Array(n).fill(0);
   cards.forEach(c=>{
-    const id=c.dataset.lista;
-    let k=id&&colunaDeLista[id]!=null&&colunaDeLista[id]<n?colunaDeLista[id]:null;
-    if(k==null){k=0;for(let j=1;j<n;j++)if(alturas[j]<alturas[k])k=j;if(id)colunaDeLista[id]=k}
+    const id=c.dataset.lista,l=id?listas.find(x=>x.id===id):null;
+    let k=null;
+    if(l&&l.col!=null&&l.col<n)k=l.col;
+    else if(id&&COLUNA_PADRAO[id]!=null)k=Math.min(COLUNA_PADRAO[id],n-1);
+    else if(id&&colunaDeLista[id]!=null&&colunaDeLista[id]<n)k=colunaDeLista[id];
+    if(k==null){k=0;for(let j=1;j<n;j++)if(alturas[j]<alturas[k])k=j}
+    if(l)l.col=k;else if(id)colunaDeLista[id]=k;
     cols[k].appendChild(c);alturas[k]+=c.offsetHeight+20})}
 let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{const g=$('#grade');if(Math.max(1,Math.floor((g.clientWidth+20)/380))!==g.children.length&&!document.body.classList.contains('arrastando'))render()},200)});
 let flut=null,px=0,py=0,flutOffX=0;
@@ -546,8 +554,11 @@ function lerDOM(){const todos={};listas.forEach(l=>l.itens.forEach(i=>todos[i.id
   document.querySelectorAll('[data-ul]').forEach(ul=>{const l=listas.find(x=>x.id===ul.dataset.ul);if(l)l.itens=[...ul.children].map(li=>todos[li.dataset.id]).filter(Boolean)})}
 function sincronizarColunasComDOM(){
   // Depois de arrastar uma lista inteira pra outra coluna (troca manual), guarda a coluna nova
-  // de cada card pra ele não "voltar" pro lugar antigo da próxima vez que montar() rodar.
-  document.querySelectorAll('.col').forEach((c,ci)=>{[...c.children].forEach(el=>{if(el.dataset&&el.dataset.lista)colunaDeLista[el.dataset.lista]=ci})})}
+  // de cada card (na própria lista, pra ir pra nuvem) pra ele não "voltar" pro lugar antigo.
+  document.querySelectorAll('.col').forEach((c,ci)=>{[...c.children].forEach(el=>{
+    const id=el.dataset&&el.dataset.lista;if(!id)return;
+    const l=listas.find(x=>x.id===id);
+    if(l)l.col=ci;else colunaDeLista[id]=ci})})}
 function lerColunas(){const mapa=new Map(listas.map(l=>[l.id,l])),ordem=[];
   document.querySelectorAll('.col').forEach(c=>{[...c.children].forEach(el=>{if(el.dataset&&mapa.has(el.dataset.lista))ordem.push(el.dataset.lista)})});
   const novaOrdem=ordem.map(id=>mapa.get(id)).filter(Boolean);
