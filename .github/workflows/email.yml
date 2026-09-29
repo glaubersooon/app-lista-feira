@@ -57,7 +57,13 @@ jobs:
           fi
           if [ "$DIA" = "terca" ]; then ASSUNTO="Lista Sr. Jorge"; DIA_SEMANA="Terça-feira"; else ASSUNTO="Lista Feira"; DIA_SEMANA="Sexta-feira"; fi
           DATA="${DIA_SEMANA}, $(TZ=America/Sao_Paulo date '+%d/%m')"
-          LINK="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}"
+          # No envio de teste (pro seu e-mail), o link entra em modo teste (?...&teste=1): funciona
+          # igual, mas não salva nada nem aparece pros outros como se fosse você mexendo na lista de verdade.
+          if [ "$MANUAL" = "true" ] && [ "$TESTE" = "true" ]; then
+            LINK="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}&teste=1"
+          else
+            LINK="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}"
+          fi
           jq -n --arg u "$PUBLIC_KEY" --arg k "$PRIVATE_KEY" --arg para "$PARA" --arg assunto "$ASSUNTO" --arg data "$DATA" --arg link "$LINK" \
             '{service_id:"service_0xqf97q",template_id:"template_bbidvdd",user_id:$u,accessToken:$k,template_params:{para:$para,assunto:$assunto,data:$data,link:$link}}' > corpo.json
           COD=$(curl -sS -o resposta.txt -w '%{http_code}' -X POST https://api.emailjs.com/api/v1.0/email/send \

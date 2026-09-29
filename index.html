@@ -38,6 +38,10 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 @keyframes surgir{from{opacity:0}to{opacity:1}}
 .grade{display:flex;gap:20px;align-items:flex-start}
 .col{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px}
+@media (min-width:701px){
+  .grade{overflow-x:auto;padding-bottom:6px}
+  .col{flex:0 0 340px}
+}
 .quadro{border:1.5px solid color-mix(in srgb,var(--cor) 45%,var(--bg));border-radius:16px;background:var(--fundo-quadro);overflow:hidden;transition:border-color .15s;container-type:inline-size}
 .quadro-topo{background:var(--cinza);padding:10px 12px 10px 16px;display:grid;grid-template-columns:minmax(0,auto) auto 1fr auto auto;grid-template-areas:"nome conta . fora botao";align-items:center;gap:4px 10px;border-bottom:1px solid var(--linha);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .quadro-topo input{user-select:text;-webkit-user-select:text}
@@ -80,6 +84,8 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 @media (max-width:700px){.bg-res{display:block}}
 .item.achado,.item.achado-lista{background:var(--achado);box-shadow:0 0 0 2px var(--cor)}
 .itens{list-style:none;margin:0;padding:8px 14px 14px;display:flex;flex-direction:column;gap:6px;min-height:60px;border-radius:0 0 12px 12px;transition:background .15s}
+.itens.vazia{min-height:0;padding:2px 14px 10px}
+.vazio-lista{color:var(--suave);font-size:15px;padding:9px 4px;border:1px dashed var(--linha);border-radius:10px;text-align:center;cursor:default}
 .item{display:flex;align-items:center;gap:8px;box-shadow:var(--sombra-item);background:var(--fundo-item);border:1px solid var(--linha);border-radius:10px;padding:4px 6px;min-height:46px;transition:background .12s,border-color .12s;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .item .ck{width:30px;height:30px;min-height:30px;padding:0;border-radius:7px;justify-content:center;flex:none;background:var(--check);border-color:var(--check);color:#fff;font-size:17px;font-weight:700}
 .item .nome{flex:1;min-width:0;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -170,11 +176,13 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .quadro.min .quadro-topo{background:var(--fundo-off);border-bottom:none}
 .quadro.min h2{color:color-mix(in srgb,var(--cor) 60%,var(--suave))}
 .fora{font-size:14px;font-weight:700;color:var(--suave);background:var(--bg);border:1px solid var(--linha);border-radius:999px;padding:2px 10px;white-space:nowrap}
-.nova{border:1.5px dashed var(--min-borda);border-radius:16px;min-height:64px;font-size:18px;justify-content:center;gap:10px;width:100%;background:transparent;color:var(--suave)}
-.rodape{position:fixed;left:0;right:0;bottom:0;background:var(--barra-forte);border-top:0;box-shadow:0 -3px 10px rgba(0,0,0,.08);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
-.rodape-in{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.vai{flex:1 1 260px;font-size:14px;color:var(--barra-forte-txt)}
-.vai b{color:var(--barra-forte-txt)}
+.nova{border:1.5px dashed var(--min-borda);border-radius:16px;min-height:0;padding:12px 16px;font-size:16px;justify-content:center;gap:10px;width:100%;background:transparent;color:var(--suave)}
+.rodape{position:fixed;left:0;right:0;bottom:0;background:transparent;padding:0 16px calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:flex-end;pointer-events:none}
+.rodape-in{pointer-events:auto;max-width:1400px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.rodape-in button{background:var(--bg);border-color:var(--linha);box-shadow:0 6px 18px rgba(20,30,20,.16)}
+.rodape-in button:hover{border-color:var(--apagado)}
+.rodape .principal{background:var(--imprimir);color:var(--imprimir-txt);border-color:var(--imprimir)}
+.rodape .zapbt{background:var(--check);border-color:var(--check);color:#fff}
 .principal{background:var(--tinta);color:var(--bg);border-color:var(--tinta);font-weight:700}
 .toast{z-index:30;position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--toast);color:var(--toast-txt);padding:12px 18px;border-radius:10px;font-size:16px;max-width:calc(100% - 32px);animation:aparecer .18s ease}
 @media (max-width:520px){h1{font-size:24px}}
@@ -246,11 +254,8 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 .add-linha{border:1px dashed color-mix(in srgb,var(--cor) 55%,var(--bg));background:color-mix(in srgb,var(--fundo-item) 65%,transparent)}
 .add-linha:hover{background:var(--fundo-item)}
 .sub button+button{border-left:0}
-.topo-acoes button,.acess button,.rodape button,.alerta button,.modal-topo button,.impr-barra button,.cats-mercado button,.sugest button,.bg-campo button{border-color:transparent;background:var(--cinza)}
-.topo-acoes button:hover,.acess button:hover,.rodape button:hover,.alerta button:hover,.modal-topo button:hover,.cats-mercado button:hover{background:var(--linha)}
-.rodape [data-ver]{background:var(--bg)}
-.rodape .principal{background:var(--imprimir);color:var(--imprimir-txt)}
-.rodape .zapbt{background:var(--check);border-color:var(--check);color:#fff}
+.topo-acoes button,.acess button,.alerta button,.modal-topo button,.impr-barra button,.cats-mercado button,.sugest button,.bg-campo button{border-color:transparent;background:var(--cinza)}
+.topo-acoes button:hover,.acess button:hover,.alerta button:hover,.modal-topo button:hover,.cats-mercado button:hover{background:var(--linha)}
 .cats-mercado button.on{background:var(--tinta);color:var(--bg)}
 .presenca,.alerta,.fora{border:0}
 .fora{background:var(--bg)}
@@ -294,20 +299,17 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
   .presenca-ico{display:block}
   .presenca-txt{display:none}
   .presenca .ponto{display:none}
-  .rodape{padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px))}
-  .rodape-in{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 8px}
-  .rodape-in [data-ver]{grid-column:1/-1;min-height:38px!important}
+  .rodape{position:fixed;background:var(--bg);box-shadow:0 -4px 16px rgba(20,30,20,.14);padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));justify-content:stretch}
+  .rodape-in{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
   .so-pc{display:none!important}
   .so-cel{display:inline-flex!important}
   .pagina{padding-block:16px 170px!important}
-  .vai{grid-column:1/-1;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .rodape-in button{white-space:nowrap;font-size:clamp(11px,3.4vw,16px);padding:6px 6px;justify-content:center;min-height:44px}
+  .rodape-in button{box-shadow:none;white-space:nowrap;font-size:clamp(11px,3.4vw,16px);padding:6px 6px;justify-content:center;min-height:46px;border-radius:12px}
   .pagina{padding-block:16px 130px}
 }
 </style>
 
 <div class="pagina">
-  <script>if(/[?&]teste=1(&|$)/.test(location.search+location.hash))document.getElementById('badgeTeste').hidden=false</script>
   <header>
     <div class="titulo-linha">
       <img src="icone-192.png" width="56" height="56" alt="" class="icone-topo" style="flex:none">
@@ -316,7 +318,9 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
         <div class="data" id="data"></div>
       </div>
     </div>
-    <div class="acess" aria-label="Acessibilidade"><button data-zoom="-1" aria-label="Diminuir tamanho">A−</button><button data-zoom="1" aria-label="Aumentar tamanho">A+</button><button data-tema id="tema" aria-label="Alternar modo claro e escuro">☾<span id="badgeTeste" hidden title="Versão de teste: não salva nada" style="font-weight:800;color:#c0392b;margin-left:3px">T</span></button></div>
+    <div class="acess" aria-label="Acessibilidade"><button data-zoom="-1" aria-label="Diminuir tamanho">A−</button><button data-zoom="1" aria-label="Aumentar tamanho">A+</button><button data-tema id="tema" aria-label="Alternar modo claro e escuro">☾</button></div>
+      <span id="badgeTeste" hidden title="Versão de teste: não salva nada, não mexe na lista de verdade" style="align-self:center;font-size:12px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:.04em;border:1px solid #c0392b;border-radius:999px;padding:2px 9px">teste</span>
+      <script>if(/[?&]teste=1(&|$)/.test(location.search+location.hash))document.getElementById('badgeTeste').hidden=false</script>
     <div class="topo-acoes">
       <div class="presenca" id="presenca" role="status" aria-label="Outra pessoa está editando a lista neste momento" hidden><span class="ponto" aria-hidden="true"></span>
         <svg class="presenca-ico" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
@@ -343,11 +347,10 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 
 <div class="rodape">
   <div class="rodape-in">
-    <div class="vai" id="vai"></div>
-    <button class="so-pc" data-ver>👁 Ver lista antes de imprimir</button>
-    <button class="principal so-pc" data-imprimir>🖨 Imprimir</button>
-    <button class="principal so-cel" data-pdf>📄 PDF</button>
-    <button class="so-cel zapbt" data-zap>💬 WhatsApp</button>
+    <button class="so-pc" data-ver id="btnVer">👁 Ver lista antes de imprimir</button>
+    <button class="principal so-pc" data-imprimir id="btnImprimir">🖨 Imprimir</button>
+    <button class="principal so-cel" data-pdf id="btnPdf">📄 PDF</button>
+    <button class="so-cel zapbt" data-zap id="btnZap">💬 WhatsApp</button>
     <button data-salvar-lista>💾 Salvar</button>
   </div>
 </div>
@@ -467,10 +470,9 @@ function tudoHTML(l){
   const buscaAtiva=buscaListaId===l.id;
   const campoBusca=buscaAtiva?`<div class="bg-campo" style="margin:8px 16px 0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg><input id="buscaLista-${l.id}" value="${esc(buscaListaTexto)}" placeholder="Digite o produto" autocomplete="off" aria-label="Buscar nesta lista"><button type="button" data-busca-lista-fechar="${l.id}">✕ Fechar</button></div>`:'';
   return `<div class="sub"><button data-tudo>${l.tudo?'☑ Desmarcar tudo':'☐ Marcar tudo'}</button><button data-org>⇅ Organizar lista</button><button data-busca-lista="${l.id}" aria-pressed="${buscaAtiva}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg> Buscar nessa lista</button></div>${campoBusca}${conf}`}
-function corpoHTML(l){return `<div class="corpo">${tudoHTML(l)}${addHTML(l)}
+function corpoHTML(l){const vazia=!l.itens.length;return `<div class="corpo">${tudoHTML(l)}${addHTML(l)}
   ${mostrarDica()&&l.itens.length>1?'<div class="dica-arrastar">✋ Segure um item e arraste para mudar a ordem</div>':''}
-  <ul class="itens" data-ul="${l.id}">${l.itens.map(itemHTML).join('')}</ul>
-  ${l.itens.length?'':'<div class="vazio" style="margin:0 16px 16px">Arraste itens para cá ou toque em Adicionar item</div>'}</div>`}
+  <ul class="itens${vazia?' vazia':''}" data-ul="${l.id}">${vazia?'<li class="vazio-lista" aria-hidden="true">Arraste itens para cá ou toque em Adicionar item</li>':l.itens.map(itemHTML).join('')}</ul></div>`}
 
 function render(){
   garantirListaMercado();aplicarRegraDia();
@@ -490,11 +492,11 @@ function render(){
   else{nb.dataset.novaAbrir='1';nb.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2" width="13" height="17" rx="3"/><path d="M6 7h6M6 10.5h6M6 14h3"/><circle cx="18" cy="18" r="5.5" fill="currentColor" stroke="none"/><path d="M18 15.2v5.6M15.2 18h5.6" style="stroke:var(--bg)" stroke-width="2"/></svg> Criar nova lista'}
   cards.push(nb);
   montar(g,cards);
-  document.querySelectorAll('[data-ul]').forEach(ul=>Sortable.create(ul,{group:'listas',animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,filter:'.ck,.det,.det-in,.emo,.nome-in',preventOnFilter:false,
+  document.querySelectorAll('[data-ul]').forEach(ul=>Sortable.create(ul,{group:'listas',animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,filter:'.ck,.det,.det-in,.emo,.nome-in,.vazio-lista',preventOnFilter:false,
     onStart:e=>{document.body.classList.add('arrastando');iniciaFlut(e.item);marcaEd(e.item.dataset.id)},
     onMove:e=>{document.querySelectorAll('.quadro').forEach(q=>q.classList.toggle('alvo',q.contains(e.to)))},
     onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.alvo').forEach(q=>q.classList.remove('alvo'));lerDOM();marcaEd(null);dicaVista();render()}}));
-  document.querySelectorAll('.col').forEach(c=>Sortable.create(c,{group:'colunas',handle:'.quadro-topo',filter:'.tog,.xlista,.nova',preventOnFilter:false,animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,
+  if(!ehMobile())document.querySelectorAll('.col:not(.col-nova)').forEach(c=>Sortable.create(c,{group:'colunas',handle:'.quadro-topo',filter:'.tog,.xlista,.nova',preventOnFilter:false,animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,
     swap:true,swapClass:'quadro-troca',
     onStart:e=>{document.body.classList.add('arrastando');iniciaFlutLista(e.item)},
     onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.quadro-troca').forEach(q=>q.classList.remove('quadro-troca'));sincronizarColunasComDOM();lerColunas();dicaVista();if(window.nuvem)nuvem.salvar()}}));
@@ -516,28 +518,34 @@ function aplicarBusca(){document.querySelectorAll('.item.achado').forEach(li=>li
 function aplicarBuscaLista(){document.querySelectorAll('.item.achado-lista').forEach(li=>li.classList.remove('achado-lista'));if(!buscaListaId||!buscaListaTexto)return;const q=norm(buscaListaTexto);if(!q)return;
   const l=listas.find(x=>x.id===buscaListaId);if(!l)return;
   l.itens.forEach(i=>{if(norm(i.n).includes(q)){const li=document.querySelector(`.item[data-id="${i.id}"]`);if(li)li.classList.add('achado-lista')}})}
-let colunaDeLista={}; // só pro card "_nova_" (não é lista de verdade, não é salvo na nuvem).
-// Coluna "de casa" de cada lista original — usada só na primeira vez que a lista ganha uma
-// coluna (l.col ainda null), pra não depender da altura do card no momento (que muda conforme
-// a lista está ativa/desativada, ex.: regra do dia de terça/sexta). Depois disso l.col fica
-// salvo na nuvem (nuvem.js) e passa a mandar sempre, em qualquer aparelho.
-const COLUNA_PADRAO={feira:0,jorge:1,umb:2,merc:2,_nova_:2};
-function montar(g,cards){const n=Math.max(1,Math.floor((g.clientWidth+20)/380));const cols=[...Array(n)].map(()=>{const c=document.createElement('div');c.className='col';g.appendChild(c);return c});
-  // Mosaico: cada lista guarda a coluna em que caiu (l.col, salvo na nuvem), então continua ali
-  // enquanto o número de colunas não mudar — mesmo que outra lista seja ativada/desativada do lado.
-  // Só quando o número de colunas muda de verdade (redimensionar a janela) é que tudo é recalculado.
-  if(n!==montar.ultimoN){listas.forEach(l=>l.col=null);colunaDeLista={};montar.ultimoN=n}
-  const alturas=new Array(n).fill(0);
-  cards.forEach(c=>{
-    const id=c.dataset.lista,l=id?listas.find(x=>x.id===id):null;
-    let k=null;
-    if(l&&l.col!=null&&l.col<n)k=l.col;
-    else if(id&&COLUNA_PADRAO[id]!=null)k=Math.min(COLUNA_PADRAO[id],n-1);
-    else if(id&&colunaDeLista[id]!=null&&colunaDeLista[id]<n)k=colunaDeLista[id];
-    if(k==null){k=0;for(let j=1;j<n;j++)if(alturas[j]<alturas[k])k=j}
-    if(l)l.col=k;else if(id)colunaDeLista[id]=k;
-    cols[k].appendChild(c);alturas[k]+=c.offsetHeight+20})}
-let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{const g=$('#grade');if(Math.max(1,Math.floor((g.clientWidth+20)/380))!==g.children.length&&!document.body.classList.contains('arrastando'))render()},200)});
+const ehMobile=()=>typeof matchMedia==='function'&&matchMedia('(max-width:700px)').matches;
+// Ordem "de casa": cada lista tem sua própria coluna, sempre — nunca duas dividindo a mesma.
+// A única forma de rearranjar (no computador) é trocar a coluna de uma lista com a de outra.
+const ORDEM_PADRAO=['feira','jorge','umb','merc'];
+function colunaPadraoDe(id){const k=ORDEM_PADRAO.indexOf(id);if(k>=0)return k;
+  const extras=listas.filter(l=>!ORDEM_PADRAO.includes(l.id)).map(l=>l.id);return ORDEM_PADRAO.length+Math.max(0,extras.indexOf(id))}
+function montar(g,cards){
+  if(ehMobile()){
+    // Celular: uma coluna só, sempre na ordem Feira/Sr. Jorge/Umbanda/Mercado (+ extras), e o
+    // "Criar nova lista" por último — não depende de l.col (isso é só pro mosaico do computador).
+    const c=document.createElement('div');c.className='col';g.appendChild(c);
+    const semNova=cards.filter(el=>el.dataset.lista!=='_nova_').sort((a,b)=>colunaPadraoDe(a.dataset.lista)-colunaPadraoDe(b.dataset.lista));
+    const nova=cards.find(el=>el.dataset.lista==='_nova_');
+    semNova.forEach(el=>c.appendChild(el));if(nova)c.appendChild(nova);
+    return}
+  // Computador: uma coluna por lista de verdade, mais uma última só pro "Criar nova lista".
+  const nova=cards.find(el=>el.dataset.lista==='_nova_');
+  const reais=cards.filter(el=>el!==nova);
+  const listasReais=reais.map(el=>listas.find(x=>x.id===el.dataset.lista)).filter(Boolean);
+  const usados=new Set(listasReais.map(l=>l.col));
+  const valido=listasReais.every(l=>l.col!=null&&l.col>=0&&l.col<listasReais.length)&&usados.size===listasReais.length;
+  if(!valido){[...listasReais].sort((a,b)=>colunaPadraoDe(a.id)-colunaPadraoDe(b.id)).forEach((l,k)=>l.col=k)}
+  const n=listasReais.length+(nova?1:0);
+  const cols=[...Array(n)].map(()=>{const c=document.createElement('div');c.className='col';g.appendChild(c);return c});
+  reais.forEach(el=>{const l=listas.find(x=>x.id===el.dataset.lista);if(l)cols[l.col].appendChild(el)});
+  if(nova){cols[listasReais.length].classList.add('col-nova');cols[listasReais.length].appendChild(nova)}}
+let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(ehMobile()!==montar.eraMobile&&!document.body.classList.contains('arrastando')){montar.eraMobile=ehMobile();render()}},200)});
+montar.eraMobile=ehMobile();
 let flut=null,px=0,py=0,flutOffX=0;
 const pos=e=>{const p=e.touches?e.touches[0]:e;if(p){px=p.clientX;py=p.clientY}if(flut)moverFlut()};
 ['pointermove','mousemove','touchmove','pointerdown','touchstart'].forEach(t=>document.addEventListener(t,pos,{passive:true,capture:true}));
@@ -563,34 +571,65 @@ function lerColunas(){const mapa=new Map(listas.map(l=>[l.id,l])),ordem=[];
   document.querySelectorAll('.col').forEach(c=>{[...c.children].forEach(el=>{if(el.dataset&&mapa.has(el.dataset.lista))ordem.push(el.dataset.lista)})});
   const novaOrdem=ordem.map(id=>mapa.get(id)).filter(Boolean);
   if(novaOrdem.length===listas.length)listas.splice(0,listas.length,...novaOrdem)}
-function resumo(){const inc=listas.filter(l=>!l.min).map(l=>l.nome);
-  $('#vai').innerHTML=inc.length?`Vai sair na impressão: ${inc.map(n=>`<b>${esc(n)}</b>`).join(' e ')}`:'Nenhuma lista ativa para imprimir'}
+function resumo(){const ativa=listas.some(l=>!l.min);
+  const btnVer=$('#btnVer'),btnImprimir=$('#btnImprimir'),btnPdf=$('#btnPdf'),btnZap=$('#btnZap');
+  if(btnVer)btnVer.innerHTML=ativa?'👁 Ver lista antes de imprimir':'🙈 Nenhuma lista ativa';
+  if(btnImprimir)btnImprimir.hidden=!ativa;
+  if(btnPdf)btnPdf.innerHTML=ativa?'📄 PDF':'🙈 Nenhuma lista ativa';
+  if(btnZap)btnZap.hidden=!ativa}
 function previa(){const p=$('#previa');const inc=listas.filter(l=>!l.min);
   p.innerHTML=`<div class="previa-topo"><b>Assim vai sair na impressão</b><span class="data">${dataTxt}</span><button data-fechar-previa>Fechar</button></div>`+
     (inc.length?inc.map(l=>{const at=l.itens.filter(i=>!i.off);return `<div><h3>Lista ${esc(l.nome)}</h3>${at.length?`<ul>${at.map(i=>`<li>${esc(linha(i))}</li>`).join('')}</ul>`:'<span class="data">Nenhum item marcado</span>'}</div>`}).join(''):'<span class="data">Nenhuma lista ativa.</span>');
   p.hidden=false}
 const FOLHA={w:794,h:1123,mv:57,mh:64,gap:40};
+// Monta a folha item a item (não lista inteira de uma vez): uma lista comprida (ex.: Mercado)
+// continua na coluna seguinte, e se ainda não couber, na página seguinte — nunca fica cortada.
+// Quando só a primeira coluna é usada numa página, essa página sai em largura cheia (sem a
+// coluna vazia do lado), do jeito que já saía antes quando cabia tudo numa lista só.
 function folha(){const inc=listas.filter(l=>!l.min);
-  const blocos=inc.map(l=>{const at=l.itens.filter(i=>!i.off);return `<div class="bloco"><h2>Lista ${esc(l.nome)}</h2><ul data-fl="${l.id}">${at.map(i=>`<li data-id="${i.id}"><span>${esc(linha(i))}</span><button class="fx" data-fx aria-label="Tirar da impressão">✕</button></li>`).join('')||'<li>Nenhum item marcado</li>'}</ul></div>`});
+  const util=FOLHA.w-2*FOLHA.mh,colW=(util-FOLHA.gap)/2,altura=FOLHA.h-2*FOLHA.mv,padBloco=24;
   const cab=`<h1>Lista ${inc.map(l=>esc(l.nome)).join(' e ')}</h1><div class="fdata">${dataTxt}</div>`;
-  const util=FOLHA.w-2*FOLHA.mh,colW=(util-FOLHA.gap)/2,altura=FOLHA.h-2*FOLHA.mv;
+  const titulo=(l,cont)=>`<h2>Lista ${esc(l.nome)}${cont?' <small style="font-weight:400;color:#777">(continuação)</small>':''}</h2>`;
   const med=document.createElement('div');med.className='folha';med.style.cssText=`position:absolute;left:-9999px;top:0;visibility:hidden;height:auto;padding:0;width:${util}px`;document.body.appendChild(med);
-  const medir=(html,w)=>{med.style.width=w+'px';med.innerHTML=html;return med.offsetHeight};
-  const hCab=medir(cab,util),hCheia=blocos.map(b=>medir(b,util)),hCol=blocos.map(b=>medir(b,colW));med.remove();
-  let paginas;
-  if(hCab+hCheia.reduce((a,b)=>a+b,0)<=altura){paginas=[{cols:[blocos.map((_,k)=>k)],unica:true}]}
-  else{paginas=[];let pg=null,c=0,usado=0;
-    blocos.forEach((_,k)=>{
-      const lim=()=>altura-(paginas.length===1?hCab:0);
-      if(!pg){pg={cols:[[],[]]};paginas.push(pg);c=0;usado=0}
-      if(usado+hCol[k]>lim()&&pg.cols[c].length){if(c===0){c=1;usado=0}else{pg={cols:[[],[]]};paginas.push(pg);c=0;usado=0}}
-      pg.cols[c].push(k);usado+=hCol[k]})}
+  const medir=html=>{med.innerHTML=html;return med.offsetHeight};
+  const hCab=medir(cab);med.style.width=colW+'px';
+  const seqs=inc.map(l=>{const at=l.itens.filter(i=>!i.off);
+    const itens=at.length?at.map(i=>`<li data-id="${i.id}"><span>${esc(linha(i))}</span><button class="fx" data-fx aria-label="Tirar da impressão">✕</button></li>`):['<li>Nenhum item marcado</li>'];
+    return {l,tAbre:medir(titulo(l,false)),tCont:medir(titulo(l,true)),itens,alturas:itens.map(h=>medir(`<ul>${h}</ul>`))}});
+  med.remove();
+  let colsPag=[[[],[]]],pg=0,col=0,usado=0;
+  const limite=()=>altura-(pg===0&&col===0?hCab:0);
+  const proxColuna=()=>{if(col===0){col=1;usado=0}else{colsPag.push([[],[]]);pg++;col=0;usado=0}};
+  const runAtual=()=>{const arr=colsPag[pg][col];return arr[arr.length-1]};
+  seqs.forEach(s=>{
+    if(usado>0&&usado+s.tAbre>limite())proxColuna();
+    colsPag[pg][col].push({lid:s.l.id,titulo:titulo(s.l,false),itens:[]});usado+=s.tAbre+padBloco;
+    s.itens.forEach((itemHtml,ii)=>{const h=s.alturas[ii];
+      if(usado+h>limite()){proxColuna();colsPag[pg][col].push({lid:s.l.id,titulo:titulo(s.l,true),itens:[]});usado+=s.tCont+padBloco}
+      runAtual().itens.push(itemHtml);usado+=h})});
+  const runHtml=r=>`<div class="bloco">${r.titulo}<ul data-fl="${r.lid}">${r.itens.join('')}</ul></div>`;
+  const paginaHtml=(cols,idx)=>{const c0=cols[0].map(runHtml).join(''),c1=cols[1].map(runHtml).join('');
+    return (idx===0?cab:'')+(c1?`<div class="duas"><div class="coluna">${c0}</div><div class="coluna">${c1}</div></div>`:c0)};
   const o=$('#impr');
-  o.innerHTML=`<div class="impr-barra"><button data-fechar-impr>← Voltar</button><span>Folha A4, como vai sair no papel${paginas.length>1?` (${paginas.length} páginas)`:''}</span><button class="principal so-pc" data-imprimir>🖨 Imprimir agora</button><button class="principal so-cel" data-pdf>📄 Salvar e compartilhar PDF</button></div>`+
-    paginas.map((p,n)=>`<div class="folha-caixa"><div class="folha">${n===0?cab:''}${p.unica?p.cols[0].map(k=>blocos[k]).join(''):`<div class="duas">${p.cols.map(col=>`<div class="coluna">${col.map(k=>blocos[k]).join('')}</div>`).join('')}</div>`}</div></div>`).join('');
+  o.innerHTML=`<div class="impr-barra"><button data-fechar-impr>← Voltar</button><span>Folha A4, como vai sair no papel${colsPag.length>1?` (${colsPag.length} páginas)`:''}</span><button class="principal so-pc" data-imprimir>🖨 Imprimir agora</button><button class="principal so-cel" data-pdf>📄 Salvar e compartilhar PDF</button></div>`+
+    colsPag.map((cols,idx)=>`<div class="folha-caixa"><div class="folha">${paginaHtml(cols,idx)}</div></div>`).join('');
   o.hidden=false;escala();
-  o.querySelectorAll('ul[data-fl]').forEach(ul=>Sortable.create(ul,{group:'fl-'+ul.dataset.fl,animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',onStart:e=>iniciaFlut(e.item),delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,filter:'.fx',preventOnFilter:false,onEnd:()=>{pararFlut();reordenar(ul.dataset.fl,[...ul.children].map(li=>li.dataset.id));render();folha()}}))}
-function reordenar(lid,ids){const l=listas.find(x=>x.id===lid);const fila=ids.map(id=>l.itens.find(i=>i.id===id));l.itens=l.itens.map(i=>i.off?i:fila.shift())}
+  // Grupo compartilhado entre todas as listas (e todos os pedaços de uma mesma lista quebrada em
+  // coluna/página): permite arrastar item pra outra coluna da mesma lista OU pra outra lista.
+  o.querySelectorAll('ul[data-fl]').forEach(ul=>Sortable.create(ul,{group:'previa-impressao',animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',onStart:e=>iniciaFlut(e.item),delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,filter:'.fx',preventOnFilter:false,onEnd:()=>{pararFlut();lerImpressaoDOM();render();folha()}}))}
+// Reconstrói, pra cada lista impressa, seus itens marcados a partir do que ficou em cada <ul data-fl>
+// dela na prévia (pode estar espalhado em mais de um <ul>, se a lista foi quebrada em colunas, e pode
+// ter ganhado ou perdido item que foi arrastado de/para outra lista). Itens não marcados (off) não
+// aparecem na prévia, então continuam com a lista de origem, do jeito que estavam.
+function lerImpressaoDOM(){
+  const todos={};listas.forEach(l=>l.itens.forEach(i=>todos[i.id]=i));
+  const porLista={};
+  document.querySelectorAll('#impr ul[data-fl]').forEach(ul=>{
+    (porLista[ul.dataset.fl]=porLista[ul.dataset.fl]||[]).push(...[...ul.children].map(li=>li.dataset.id).filter(Boolean))});
+  Object.keys(porLista).forEach(lid=>{
+    const l=listas.find(x=>x.id===lid);if(!l)return;
+    const off=l.itens.filter(i=>i.off),on=porLista[lid].map(id=>todos[id]).filter(Boolean);
+    l.itens=[...on,...off]})}
 // Dica de arrastar: só em tela de toque, some depois do primeiro arraste (guardado no aparelho).
 let dicaOk=false;try{dicaOk=localStorage.getItem('dica-arrastar')==='1'}catch(e){}
 function mostrarDica(){return !dicaOk&&matchMedia('(hover:none)').matches}
@@ -707,7 +746,7 @@ function temAtiva(){if(listas.some(l=>!l.min))return true;aviso('Ative pelo meno
 // Impressão: usa a mesma folha A4 da prévia. Ctrl+P também funciona.
 let imprAuto=false,tituloApp=document.title;
 addEventListener('beforeprint',()=>{document.title=nomePDF().replace(/\.pdf$/,'');if($('#impr').hidden){imprAuto=true;folha()}});
-addEventListener('afterprint',()=>{document.title=tituloApp;if(imprAuto){imprAuto=false;$('#impr').hidden=true}});
+addEventListener('afterprint',()=>{document.title=tituloApp;if(imprAuto){imprAuto=false;$('#impr').hidden=true}fecharMercadoDepois()});
 function imprimir(){print()}
 // Atalho para instalar como app (PWA): quando o navegador oferece a instalação (beforeinstallprompt).
 // No iPhone (Safari/iOS) esse evento nunca existe, então mostramos o botão do mesmo jeito com instruções manuais.
@@ -737,7 +776,7 @@ async function gerarPDF(b){const txt=b.innerHTML;b.disabled=true;b.textContent='
     for(let k=0;k<pags.length;k++){const cv=await html2canvas(pags[k],{scale:2,backgroundColor:'#ffffff'});if(k)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',.92),'JPEG',0,0,210,297)}
     pdfBlob=pdf.output('blob');await compartilharPDF(true)}
   catch(e){console.error(e);aviso('Não foi possível gerar o PDF. Confira a internet e tente de novo.')}
-  finally{if(cx)cx.remove();document.body.style.zoom=pref.z;b.disabled=false;b.innerHTML=txt}}
+  finally{if(cx)cx.remove();document.body.style.zoom=pref.z;b.disabled=false;b.innerHTML=txt;fecharMercadoDepois()}}
 async function compartilharPDF(primeira){const f=new File([pdfBlob],pdfNome,{type:'application/pdf'});
   if(navigator.canShare&&navigator.canShare({files:[f]})){
     try{await navigator.share({files:[f],title:pdfNome.replace(/\.pdf$/,'')});$('#modal').hidden=true;return}
@@ -815,7 +854,10 @@ function restaurar(){const f=finalizada||estadoPadrao();const todos={};listas.fo
   listas.forEach(l=>{l.itens=[...l.itens.filter(i=>!usados.has(i.id)),...destino[l.id]]});$('#modal').hidden=true;render();aviso('Lista restaurada.')}
 function estadoAtual(){const L={},I={};listas.forEach((l,li)=>{L[l.id]={min:!!l.min,pos:li};l.itens.forEach((i,ii)=>I[i.id]={lista:l.id,pos:ii,off:!!i.off})});return {listas:L,itens:I}}
 function salvarEstado(){if(window.nuvem)nuvem.finalizar(estadoAtual())}
-function finalizar(){salvarEstado();const m=listas.find(l=>l.id==='merc');if(m&&!m.min){m.min=true;render()}}
+// Fecha a lista Mercado sozinha, mas só depois que a impressão/PDF/WhatsApp já capturou o conteúdo
+// (fechar antes fazia a lista sumir da própria impressão que a estava incluindo).
+function fecharMercadoDepois(){const m=listas.find(l=>l.id==='merc');if(m&&!m.min){m.min=true;render()}}
+function finalizar(){salvarEstado()}
 function pedirSalvar(){const m=$('#modal');
   m.innerHTML=`<div class="caixa-modal" role="dialog" aria-label="Salvar"><div class="modal-topo"><b>💾 Salvar</b><button data-modal-fechar>✕ Fechar</button></div>
   <div class="modal-perigo">Tem certeza que deseja salvar? Isso vai salvar a organização atual das listas para quando você abrir novamente.
@@ -869,7 +911,7 @@ document.addEventListener('click',e=>{
   if(b.hasAttribute('data-pdf')){if(!temAtiva())return;finalizar();gerarPDF(b);return}
   if(b.hasAttribute('data-pdf-share')){compartilharPDF();return}
   if(b.hasAttribute('data-pdf-baixar')){baixarPDF();return}
-  if(b.hasAttribute('data-zap')){if(!temAtiva())return;finalizar();location.href='https://wa.me/?text='+encodeURIComponent(textoZap());return}
+  if(b.hasAttribute('data-zap')){if(!temAtiva())return;finalizar();const txtZap=textoZap();fecharMercadoDepois();location.href='https://wa.me/?text='+encodeURIComponent(txtZap);return}
   if(b.hasAttribute('data-busca-abrir')){busca=busca??'';$('#buscaGeral').hidden=false;$('#bg-in').focus();aplicarBusca();return}
   if(b.hasAttribute('data-busca-fechar')){busca=null;$('#bg-in').value='';$('#buscaGeral').hidden=true;aplicarBusca();return}
   if(b.dataset.buscaLista){buscaListaId=buscaListaId===b.dataset.buscaLista?null:b.dataset.buscaLista;buscaListaTexto='';render();return}

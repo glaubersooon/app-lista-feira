@@ -90,7 +90,10 @@ function esperar(cond, tentativas = 50) {
   const lixTopos = doc.querySelectorAll('.lix-item .lix-topo');
   const headerIcon = doc.querySelector('header img[src="icone-192.png"]');
   const instalarLinha = doc.querySelector('#instalarLinha');
-  const vaiHTML = doc.querySelector('#vai').innerHTML;
+  const btnVer = doc.querySelector('#btnVer');
+  const btnImprimir = doc.querySelector('#btnImprimir');
+  const btnPdf = doc.querySelector('#btnPdf');
+  const btnZap = doc.querySelector('#btnZap');
 
   console.log('Colunas geradas:', cols.length);
   console.log('Cards de lista:', quadros.length, '(esperado 5 listas)');
@@ -99,7 +102,7 @@ function esperar(cond, tentativas = 50) {
   console.log('Itens na lixeira:', lixItens.length, '| com .lix-topo:', lixTopos.length);
   console.log('Ícone do app no topo da página presente:', !!headerIcon);
   console.log('Botão de instalar app presente (oculto por padrão):', !!instalarLinha, instalarLinha && instalarLinha.hidden);
-  console.log('Texto da faixa de impressão (.vai):', vaiHTML);
+  console.log('Rodapé com listas ativas (feira, jorge, grande):', btnVer && btnVer.textContent.trim(), '| imprimir oculto:', btnImprimir && btnImprimir.hidden, '| pdf:', btnPdf && btnPdf.textContent.trim(), '| zap oculto:', btnZap && btnZap.hidden);
   console.log('Erros de execução capturados:', erros.length);
   erros.forEach(e => console.log('  ERRO:', e && e.stack || e));
 
@@ -108,7 +111,9 @@ function esperar(cond, tentativas = 50) {
   if (lixItens.length !== 2 || lixTopos.length !== 2) throw new Error('lixeira não renderizou como esperado');
   if (!headerIcon) throw new Error('ícone do app não aparece no topo da página');
   if (!instalarLinha || !instalarLinha.hidden) throw new Error('botão de instalar deveria existir e começar oculto');
-  if ((vaiHTML.match(/<b>/g) || []).length !== 3) throw new Error('resumo() deveria ter um <b> por nome de lista (3 listas ativas: feira, jorge, grande)');
+  if (!btnVer || !btnPdf || !btnImprimir || !btnZap) throw new Error('botões do rodapé (ver/imprimir/pdf/zap) não existem');
+  if (btnImprimir.hidden || btnZap.hidden) throw new Error('com listas ativas, imprimir e whatsapp deveriam estar visíveis');
+  if (/nenhuma lista ativa/i.test(btnVer.textContent) || /nenhuma lista ativa/i.test(btnPdf.textContent)) throw new Error('com listas ativas, os botões não deveriam mostrar "nenhuma lista ativa"');
   if (erros.length) throw new Error('houve erro de execução durante render/pintarLixeira/resumo');
   // pintarLixeira() acima deixou o #modal aberto (é o que ela faz de verdade); fecha para simular o estado
   // normal da página (nada aberto ainda) antes de seguir com os próximos testes.
