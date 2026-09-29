@@ -53,7 +53,15 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .quadro.min .tog{background:color-mix(in srgb,var(--tog-on) 65%,var(--fundo-quadro));border-color:transparent;color:color-mix(in srgb,var(--check) 60%,var(--suave))}
 .tog{grid-area:botao;font-size:13.5px;min-height:36px;min-width:0;padding:4px 10px;background:var(--bg);white-space:nowrap;justify-content:center}
 @container (max-width:560px){.quadro.min .quadro-topo{grid-template-columns:minmax(0,auto) auto 1fr auto;grid-template-areas:"nome conta . botao" "fora fora fora fora";justify-items:start}.quadro.min .tog{justify-self:end}}
-@container (max-width:385px){.quadro .quadro-topo,.quadro.min .quadro-topo{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nome conta" "botao botao" "fora fora";justify-items:start;row-gap:6px}}
+@container (max-width:385px){
+  .quadro-topo{display:flex;align-items:center;flex-wrap:nowrap;gap:6px;padding:8px 8px 8px 12px}
+  .quadro-topo h2{flex:1 1 auto;min-width:22px;font-size:15.5px}
+  .quadro-topo .conta{flex:none;font-size:11px}
+  .quadro-topo .fora{flex:none;font-size:11px;padding:1px 7px}
+  .quadro-topo .topo-dir{flex:none;margin-left:0}
+  .quadro-topo .tog{font-size:11.5px;min-height:30px;padding:3px 8px}
+  .conta-suf,.fora-suf,.tog-suf{display:none}
+}
 .titulo-linha{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;min-width:0}
 .quadro h2{margin:0;font-size:20px;font-weight:800;color:var(--cor)}
 .conta{font-size:13px;color:var(--suave);font-weight:500}
@@ -181,6 +189,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 @keyframes tut-seta-desce{0%,15%{transform:translateY(0)}50%{transform:translateY(8px)}85%,100%{transform:translateY(0)}}
 .seta-imprimir{animation:tut-seta-desce 1.3s ease-in-out infinite}
 .balao-imprimir{bottom:170px}
+.balao-ativar{bottom:360px}
 .balao-tutorial{position:fixed;left:50%;bottom:170px;transform:translateX(-50%);z-index:35;background:var(--bg);border:1px solid var(--linha);border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.22);padding:16px;max-width:300px;width:calc(100% - 32px);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;animation:crescer .2s cubic-bezier(.2,.8,.2,1)}
 .balao-tutorial svg{width:100%;height:auto}
 .balao-tutorial p{margin:0;font-size:15px;color:var(--tinta)}
@@ -273,7 +282,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
 @media (max-width:700px){
   .titulo-linha{order:0;flex:1 1 auto;min-width:0}
   .acess{order:1;flex:0 1 auto;margin-left:auto;margin-bottom:0}
-  .icone-topo{width:28px!important;height:28px!important}
+  .icone-topo{width:36px!important;height:36px!important}
   header h1{font-size:16px!important}
   header .data{font-size:12px!important}
   .acess button{min-height:26px;padding:1px 7px;font-size:12px}
@@ -301,7 +310,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
   <script>if(/[?&]teste=1(&|$)/.test(location.search+location.hash))document.getElementById('badgeTeste').hidden=false</script>
   <header>
     <div class="titulo-linha">
-      <img src="icone-192.png" width="44" height="44" alt="" class="icone-topo" style="flex:none">
+      <img src="icone-192.png" width="56" height="56" alt="" class="icone-topo" style="flex:none">
       <div>
         <h1>Compras da semana</h1>
         <div class="data" id="data"></div>
@@ -439,7 +448,7 @@ const d=new Date();
 const dataTxt=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
 $('#data').textContent=dataTxt;
 
-function contar(l){const a=l.itens.filter(i=>!i.off).length;return l.itens.length?`${a} de ${l.itens.length} para comprar`:'sem itens'}
+function contar(l){const a=l.itens.filter(i=>!i.off).length;return l.itens.length?`${a} de ${l.itens.length}<span class="conta-suf"> para comprar</span>`:'sem itens'}
 function itemHTML(i){return `<li class="item${i.off?' off':''}${editandoIds.has(i.id)?' editando':''}" data-id="${i.id}">
   <button class="ck" aria-label="${i.off?'Marcar para comprar':'Não comprar'}">${i.off?'✕':'✓'}</button>
   <button class="emo${i.e?'':' sem'}" data-emo aria-label="Trocar emoji">${i.e?ico(i.e):'☺'}</button><span class="nome" title="${esc(i.n)}">${esc(i.n)}</span>
@@ -471,12 +480,12 @@ function render(){
     q.className='quadro'+(l.min?' min':'');q.dataset.lista=l.id;
     q.style.setProperty('--cor',`var(--${l.cor})`);q.style.setProperty('--cor-bg',`var(--${l.cor}-bg)`);
     q.innerHTML=`<div class="quadro-topo">
-      <h2 title="${esc(l.nome)}">${esc(l.nome)}</h2><span class="conta">${contar(l)}</span>${l.min?'<span class="fora">fora da impressão</span>':''}
-      <div class="topo-dir"><button class="tog" data-min>${CHEV}${l.min?'Ativar lista':'Desativar lista'}</button></div></div>
+      <h2 title="${esc(l.nome)}">${esc(l.nome)}</h2><span class="conta">${contar(l)}</span>${l.min?'<span class="fora">fora<span class="fora-suf"> da impressão</span></span>':''}
+      <div class="topo-dir"><button class="tog" data-min>${CHEV}${l.min?'Ativar':'Desativar'}<span class="tog-suf"> lista</span></button></div></div>
       ${l.min?'':corpoHTML(l)}`;
     cards.push(q);
   });
-  const nb=document.createElement(novaListaAberta?'div':'button');nb.className='nova';
+  const nb=document.createElement(novaListaAberta?'div':'button');nb.className='nova';nb.dataset.lista='_nova_';
   if(novaListaAberta){nb.style.cssText='display:block;padding:16px';nb.innerHTML=`<form class="add-form" data-form-lista><input id="novaLista-nome" value="${esc(novaListaTexto)}" placeholder="Nome da nova lista" autocomplete="off" aria-label="Nome da nova lista"><button>＋ Criar</button></form>`}
   else{nb.dataset.novaAbrir='1';nb.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2" width="13" height="17" rx="3"/><path d="M6 7h6M6 10.5h6M6 14h3"/><circle cx="18" cy="18" r="5.5" fill="currentColor" stroke="none"/><path d="M18 15.2v5.6M15.2 18h5.6" style="stroke:var(--bg)" stroke-width="2"/></svg> Criar nova lista'}
   cards.push(nb);
@@ -488,12 +497,12 @@ function render(){
   document.querySelectorAll('.col').forEach(c=>Sortable.create(c,{group:'colunas',handle:'.quadro-topo',filter:'.tog,.xlista,.nova',preventOnFilter:false,animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,
     swap:true,swapClass:'quadro-troca',
     onStart:e=>{document.body.classList.add('arrastando');iniciaFlutLista(e.item)},
-    onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.quadro-troca').forEach(q=>q.classList.remove('quadro-troca'));lerColunas();dicaVista();if(window.nuvem)nuvem.salvar()}}));
+    onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.quadro-troca').forEach(q=>q.classList.remove('quadro-troca'));sincronizarColunasComDOM();lerColunas();dicaVista();if(window.nuvem)nuvem.salvar()}}));
   if(addAberto){const inp=$('#novo-'+addAberto);if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);inp.closest('.add-caixa').querySelector('[data-sug]').innerHTML=alertaDup?'':sugestHTML(addTexto)}}
   if(novaListaAberta){const inp=$('#novaLista-nome');if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
   if(buscaListaId){const inp=$('#buscaLista-'+buscaListaId);if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}}
   g.style.minHeight='';if(Math.abs(scrollY-y0)>1)scrollTo(0,y0);
-  resumo();if(previaAberta)previa();aplicarBusca();aplicarBuscaLista();mostrarTutorialImprimir();
+  resumo();if(previaAberta)previa();aplicarBusca();aplicarBuscaLista();mostrarTutorialImprimir();mostrarTutorialAtivar();
   if(window.nuvem)nuvem.salvar();
 }
 const marcaEd=id=>{if(window.nuvem)nuvem.editando(id)};
@@ -507,11 +516,19 @@ function aplicarBusca(){document.querySelectorAll('.item.achado').forEach(li=>li
 function aplicarBuscaLista(){document.querySelectorAll('.item.achado-lista').forEach(li=>li.classList.remove('achado-lista'));if(!buscaListaId||!buscaListaTexto)return;const q=norm(buscaListaTexto);if(!q)return;
   const l=listas.find(x=>x.id===buscaListaId);if(!l)return;
   l.itens.forEach(i=>{if(norm(i.n).includes(q)){const li=document.querySelector(`.item[data-id="${i.id}"]`);if(li)li.classList.add('achado-lista')}})}
+let colunaDeLista={}; // id da lista -> índice da coluna. Fica de pé entre renders (só o carregamento
+// da página zera), pra ativar/desativar ou editar uma lista não fazer as outras pularem de coluna.
 function montar(g,cards){const n=Math.max(1,Math.floor((g.clientWidth+20)/380));const cols=[...Array(n)].map(()=>{const c=document.createElement('div');c.className='col';g.appendChild(c);return c});
-  // Cada card entra na coluna mais baixa no momento (tipo mosaico): mantém a ordem Feira, Sr. Jorge,
-  // Umbanda, Mercado, Criar nova lista, preenchendo a coluna do lado quando a atual já está mais alta.
+  // Mosaico: cada card guarda a coluna em que caiu da primeira vez (por id), então continua ali
+  // enquanto o número de colunas não mudar — mesmo que outra lista seja ativada/desativada do lado.
+  // Só quando o número de colunas muda (redimensionar a janela) é que tudo é recalculado do zero.
+  if(n!==montar.ultimoN){colunaDeLista={};montar.ultimoN=n}
   const alturas=new Array(n).fill(0);
-  cards.forEach(c=>{let k=0;for(let j=1;j<n;j++)if(alturas[j]<alturas[k])k=j;cols[k].appendChild(c);alturas[k]+=c.offsetHeight+20})}
+  cards.forEach(c=>{
+    const id=c.dataset.lista;
+    let k=id&&colunaDeLista[id]!=null&&colunaDeLista[id]<n?colunaDeLista[id]:null;
+    if(k==null){k=0;for(let j=1;j<n;j++)if(alturas[j]<alturas[k])k=j;if(id)colunaDeLista[id]=k}
+    cols[k].appendChild(c);alturas[k]+=c.offsetHeight+20})}
 let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{const g=$('#grade');if(Math.max(1,Math.floor((g.clientWidth+20)/380))!==g.children.length&&!document.body.classList.contains('arrastando'))render()},200)});
 let flut=null,px=0,py=0,flutOffX=0;
 const pos=e=>{const p=e.touches?e.touches[0]:e;if(p){px=p.clientX;py=p.clientY}if(flut)moverFlut()};
@@ -527,6 +544,10 @@ function moverFlut(){const z=pref.z||1;flut.style.left=(px/z-flutOffX)+'px';flut
 function pararFlut(){if(flut){flut.remove();flut=null}}
 function lerDOM(){const todos={};listas.forEach(l=>l.itens.forEach(i=>todos[i.id]=i));
   document.querySelectorAll('[data-ul]').forEach(ul=>{const l=listas.find(x=>x.id===ul.dataset.ul);if(l)l.itens=[...ul.children].map(li=>todos[li.dataset.id]).filter(Boolean)})}
+function sincronizarColunasComDOM(){
+  // Depois de arrastar uma lista inteira pra outra coluna (troca manual), guarda a coluna nova
+  // de cada card pra ele não "voltar" pro lugar antigo da próxima vez que montar() rodar.
+  document.querySelectorAll('.col').forEach((c,ci)=>{[...c.children].forEach(el=>{if(el.dataset&&el.dataset.lista)colunaDeLista[el.dataset.lista]=ci})})}
 function lerColunas(){const mapa=new Map(listas.map(l=>[l.id,l])),ordem=[];
   document.querySelectorAll('.col').forEach(c=>{[...c.children].forEach(el=>{if(el.dataset&&mapa.has(el.dataset.lista))ordem.push(el.dataset.lista)})});
   const novaOrdem=ordem.map(id=>mapa.get(id)).filter(Boolean);
@@ -628,6 +649,49 @@ function mostrarTutorialImprimir(){
     b.querySelector('.fechar-tutorial').addEventListener('click',fechar);
     b.querySelector('.ok-tutorial').addEventListener('click',fechar);
   },1500)}
+// Tutorial (uma vez só, depois do de imprimir): explica o botão de ativar/desativar lista.
+let tutorialAtivarOk=false;try{tutorialAtivarOk=localStorage.getItem('tutorial-ativar')==='1'}catch(e){}
+function mostrarTutorialAtivar(){
+  if(tutorialAtivarOk)return;tutorialAtivarOk=true;try{localStorage.setItem('tutorial-ativar','1')}catch(e){}
+  setTimeout(()=>{
+    if(!document.querySelector('.tog'))return;
+    const b=document.createElement('div');b.className='balao-tutorial balao-ativar';b.setAttribute('role','dialog');b.setAttribute('aria-label','Dica: ativar ou desativar lista');
+    b.innerHTML=`<button class="fechar-tutorial" aria-label="Fechar">✕</button>
+      <svg viewBox="0 0 240 108" aria-hidden="true" font-family="Atkinson Hyperlegible,Verdana,sans-serif">
+        <rect x="4" y="6" width="104" height="92" rx="12" fill="var(--fundo-quadro)" stroke="var(--feira)" stroke-opacity=".45"/>
+        <rect x="4" y="6" width="104" height="24" rx="12" fill="var(--feira-bg)"/>
+        <rect x="4" y="18" width="104" height="12" fill="var(--feira-bg)"/>
+        <text x="14" y="22" font-size="12" font-weight="700" fill="var(--feira)">Feira</text>
+        <rect x="72" y="12" width="30" height="14" rx="7" fill="var(--fundo-quadro)" stroke="var(--linha)"/>
+        <text x="87" y="22" font-size="8" text-anchor="middle" fill="var(--suave)">ativa</text>
+        <circle cx="18" cy="44" r="7" fill="var(--fundo-item)" stroke="var(--linha)"/>
+        <rect x="30" y="40" width="46" height="8" rx="4" fill="var(--linha)"/>
+        <circle cx="18" cy="62" r="7" fill="var(--fundo-item)" stroke="var(--linha)"/>
+        <rect x="30" y="58" width="46" height="8" rx="4" fill="var(--linha)"/>
+        <text x="14" y="90" font-size="9" fill="var(--check)" font-weight="700">✓ entra na impressão</text>
+        <rect x="132" y="6" width="104" height="92" rx="12" fill="var(--fundo-off)" stroke="var(--linha)"/>
+        <rect x="132" y="6" width="104" height="24" rx="12" fill="var(--linha)"/>
+        <text x="142" y="22" font-size="12" font-weight="700" fill="var(--suave)">Sr. Jorge</text>
+        <rect class="tut-item-sobe" x="196" y="12" width="34" height="14" rx="7" fill="var(--fundo-quadro)" stroke="var(--pres)"/>
+        <text class="tut-item-sobe" x="213" y="22" font-size="8" text-anchor="middle" fill="var(--pres)">toque</text>
+        <rect x="140" y="46" width="88" height="14" rx="7" fill="var(--bg)" stroke="var(--linha)"/>
+        <text x="184" y="56" font-size="8" text-anchor="middle" fill="var(--suave)">fora da impressão</text>
+        <text x="142" y="90" font-size="9" fill="var(--suave)">Itens continuam guardados</text>
+      </svg>
+    <p>Toque em "Ativar/Desativar lista" pra decidir quais listas entram na impressão — sem apagar os itens de nenhuma.</p>
+    <button class="ok-tutorial">Entendi</button>`;
+    document.body.appendChild(b);
+    const fechar=()=>b.remove();
+    b.querySelector('.fechar-tutorial').addEventListener('click',fechar);
+    b.querySelector('.ok-tutorial').addEventListener('click',fechar);
+  },4800)}
+// Botão discreto (mesma senha do "derrubar") pra fazer todos os balões de tutorial aparecerem de novo,
+// tanto neste aparelho (agora) quanto em qualquer outro que ainda não tenha visto os novos.
+function resetarTutoriais(){
+  ['tutorial-arrastar-v2','tutorial-imprimir','tutorial-ativar','dica-arrastar'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+  tutorialOk=false;tutorialImprOk=false;tutorialAtivarOk=false;dicaOk=false;
+  render();
+}
 function temAtiva(){if(listas.some(l=>!l.min))return true;aviso('Ative pelo menos uma lista para imprimir ou enviar.');return false}
 // Impressão: usa a mesma folha A4 da prévia. Ctrl+P também funciona.
 let imprAuto=false,tituloApp=document.title;
@@ -707,7 +771,7 @@ function abrirMenu(id,x,y){fecharMenu();menuAlvo=id;const r=acharItem(id);const 
   m.innerHTML='<button data-menu="nome">✏️ Editar nome</button><button data-menu="det">📝 Editar detalhe</button><button data-menu="excluir" class="perigo">🗑 Excluir item</button>'+(r&&!r.l.fixa?'<button data-menu="xlista" class="perigo">🗑 Excluir lista inteira</button>':'');
   document.body.appendChild(m);const z=pref.z||1;m.style.left=Math.max(8,Math.min(x/z,innerWidth/z-m.offsetWidth-8))+'px';m.style.top=Math.max(8,Math.min(y/z,innerHeight/z-m.offsetHeight-8))+'px'}
 function abrirMenuTopo(x,y){fecharMenu();menuAlvo='__topo__';const m=document.createElement('div');m.className='menu-item';m.id='menuItem';m.setAttribute('role','menu');
-  m.innerHTML='<button data-menu="derrubar" class="perigo">🚪 Derrubar todos os usuários</button>';
+  m.innerHTML='<button data-menu="derrubar" class="perigo">🚪 Derrubar todos os usuários</button><button data-menu="resetar-tutoriais">💡 Resetar tutoriais</button>';
   document.body.appendChild(m);const z=pref.z||1;m.style.left=Math.max(8,Math.min(x/z,innerWidth/z-m.offsetWidth-8))+'px';m.style.top=Math.max(8,Math.min(y/z,innerHeight/z-m.offsetHeight-8))+'px'}
 function abrirMenuLista(id,x,y){fecharMenu();menuAlvo='__lista__'+id;const m=document.createElement('div');m.className='menu-item';m.id='menuItem';m.setAttribute('role','menu');
   m.innerHTML='<button data-menu="xlistadireto" class="perigo">🗑 Excluir lista</button>';
@@ -771,6 +835,7 @@ document.addEventListener('click',e=>{
   if(b.dataset.aviso){aviso(b.dataset.aviso);return}
   if(b.dataset.menu){const id=menuAlvo,tipo=b.dataset.menu;fecharMenu();
     if(tipo==='derrubar'){const senha=prompt('Senha para derrubar todos os usuários:');if(senha===null)return;if(senha!=='1862'){aviso('Senha incorreta.');return}if(window.nuvem&&window.nuvem.derrubar)window.nuvem.derrubar();aviso('Todos foram desconectados.');return}
+    if(tipo==='resetar-tutoriais'){const senha=prompt('Senha para resetar os tutoriais:');if(senha===null)return;if(senha!=='1862'){aviso('Senha incorreta.');return}resetarTutoriais();aviso('Tutoriais resetados: vão aparecer de novo.');return}
     if(tipo==='xlista'){const r=acharItem(id);if(r)pedirExcluirLista(r.l.id);return}
     if(tipo==='xlistadireto'){pedirExcluirLista(id.replace('__lista__',''));return}
     const li=document.querySelector(`.item[data-id="${id}"]`);if(!li)return;
@@ -815,7 +880,7 @@ document.addEventListener('click',e=>{
       const abrir=()=>{l.min=false;render()};
       if(!q||semMov())return abrir();
       const fora=q.querySelector('.fora');if(fora)fora.remove();
-      const tog=q.querySelector('.tog');if(tog)tog.innerHTML=CHEV+'Desativar lista';
+      const tog=q.querySelector('.tog');if(tog)tog.innerHTML=CHEV+'Desativar<span class="tog-suf"> lista</span>';
       q.classList.remove('min');q.insertAdjacentHTML('beforeend',corpoHTML(l));
       const c=q.querySelector('.corpo'),alvo=c.scrollHeight;
       q.classList.add('abrindo');c.style.overflow='hidden';
