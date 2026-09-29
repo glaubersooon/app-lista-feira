@@ -25,6 +25,20 @@ jobs:
   enviar:
     runs-on: ubuntu-latest
     steps:
+      - name: Derrubar todos os usuários (só no envio de verdade, pra sogra abrir sozinha)
+        if: ${{ github.event_name == 'schedule' || inputs.teste == false }}
+        env:
+          CODIGO: ${{ secrets.CODIGO_ACESSO }}
+        run: |
+          if [ -z "$CODIGO" ]; then echo "Sem código de acesso nos segredos. Pulando."; exit 0; fi
+          AGORA=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          COD=$(curl -sS -o resposta-derrubar.txt -w '%{http_code}' \
+            -X PATCH "https://firestore.googleapis.com/v1/projects/app-lista-feira/databases/(default)/documents/acesso/${CODIGO}/estado/sessao" \
+            -H 'Content-Type: application/json' \
+            -d "{\"fields\":{\"em\":{\"timestampValue\":\"${AGORA}\"},\"por\":{\"stringValue\":\"auto-email\"}}}")
+          echo "Resposta do Firestore ($COD): $(cat resposta-derrubar.txt)"
+          # Não falha o job por causa disso: o e-mail é mais importante que o derrubar.
+          [ "$COD" = "200" ] || echo "Aviso: não deu pra derrubar os usuários antes de enviar (não bloqueia o e-mail)."
       - name: Enviar e-mail
         env:
           PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
