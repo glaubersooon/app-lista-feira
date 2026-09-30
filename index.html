@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#ffffff"><link rel="icon" href="icone-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Lista de Compras"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Compras da Semana</title>
+<title>Lista Inteligente</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
 :root{
@@ -22,8 +22,8 @@
 body{background:var(--bg);color:var(--tinta);font-family:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;font-size:16px;line-height:1.4;padding-inline:16px;padding-block:0}
 .pagina{max-width:1400px;margin:0 auto;padding-block:20px 120px;display:flex;flex-direction:column;gap:20px}
 header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
-h1{font-size:28px;margin:0;text-wrap:balance}
-.data{color:var(--suave);font-size:17px}
+h1{font-size:28px;margin:0;line-height:1.1;text-wrap:balance}
+.data{color:var(--suave);font-size:17px;line-height:1.1}
 .topo-acoes{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 button{font:inherit;color:var(--tinta);background:var(--fundo-item);border:1px solid var(--linha);border-radius:10px;padding:8px 14px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 button:hover{border-color:var(--apagado)}
@@ -39,7 +39,9 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .grade{display:flex;gap:20px;align-items:flex-start}
 .col{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px}
 @media (min-width:701px){
-  .grade{overflow-x:auto;padding-bottom:6px}
+  /* Quebra pra fora da faixa central (.pagina tem max-width e o body tem margem lateral) pra poder
+     rolar de verdade até a borda real da tela, em vez de esbarrar numa faixa vazia de cada lado. */
+  .grade{overflow-x:auto;padding-bottom:6px;width:100vw;margin-left:calc(50% - 50vw)}
   .col{flex:0 0 340px}
 }
 .quadro{border:1.5px solid color-mix(in srgb,var(--cor) 45%,var(--bg));border-radius:16px;background:var(--fundo-quadro);overflow:hidden;transition:border-color .15s;container-type:inline-size}
@@ -67,6 +69,7 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
   .conta-suf,.fora-suf,.tog-suf{display:none}
 }
 .titulo-linha{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;min-width:0}
+.titulo-linha>div{display:flex;flex-direction:column;justify-content:center;gap:3px}
 .quadro h2{margin:0;font-size:20px;font-weight:800;color:var(--cor)}
 .conta{font-size:13px;color:var(--suave);font-weight:500}
 .botoes{display:flex;gap:8px;flex-wrap:wrap}
@@ -314,7 +317,7 @@ li.flutua:not(.item){background:#fff;color:#111;font-size:17px;padding:3px 10px;
     <div class="titulo-linha">
       <img src="icone-192.png" width="56" height="56" alt="" class="icone-topo" style="flex:none">
       <div>
-        <h1>Compras da semana</h1>
+        <h1>Lista Inteligente</h1>
         <div class="data" id="data"></div>
       </div>
     </div>
@@ -543,8 +546,24 @@ function montar(g,cards){
   const n=listasReais.length+(nova?1:0);
   const cols=[...Array(n)].map(()=>{const c=document.createElement('div');c.className='col';g.appendChild(c);return c});
   reais.forEach(el=>{const l=listas.find(x=>x.id===el.dataset.lista);if(l)cols[l.col].appendChild(el)});
-  if(nova){cols[listasReais.length].classList.add('col-nova');cols[listasReais.length].appendChild(nova)}}
-let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(ehMobile()!==montar.eraMobile&&!document.body.classList.contains('arrastando')){montar.eraMobile=ehMobile();render()}},200)});
+  if(nova){cols[listasReais.length].classList.add('col-nova');cols[listasReais.length].appendChild(nova)}
+  centralizarGrade(g,listasReais.length)}
+// No computador, com a rolagem lateral (.grade) já esticada até a borda real da tela (CSS acima),
+// isso calcula uma margem interna igual dos dois lados pra deixar as colunas de verdade centralizadas
+// na tela ao abrir (coluna 1 sem cortar), sobrando só um pedaço da coluna "criar lista" espiando na
+// borda direita. Ao rolar, some essa margem e as listas passam a ocupar a tela inteira de verdade.
+function centralizarGrade(g,nReais){
+  if(ehMobile()||!nReais){g.style.paddingLeft='';g.style.paddingRight='';return}
+  const COLW=340,GAP=20;
+  const largura=nReais*COLW+(nReais-1)*GAP;
+  const pad=Math.max(16,Math.round((innerWidth-largura)/2));
+  // Só a esquerda ganha essa margem (pra centralizar as colunas de verdade e a coluna 1 não nascer
+  // cortada). Sem margem na direita: rolando até o fim, a última coluna encosta na borda real da
+  // tela, ou seja, as listas passam a ocupar a tela inteira de verdade.
+  g.style.paddingLeft=pad+'px';g.style.paddingRight='0'}
+let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{
+  if(ehMobile()!==montar.eraMobile&&!document.body.classList.contains('arrastando')){montar.eraMobile=ehMobile();render();return}
+  if(!ehMobile())centralizarGrade($('#grade'),listas.length)},200)});
 montar.eraMobile=ehMobile();
 let flut=null,px=0,py=0,flutOffX=0;
 const pos=e=>{const p=e.touches?e.touches[0]:e;if(p){px=p.clientX;py=p.clientY}if(flut)moverFlut()};
