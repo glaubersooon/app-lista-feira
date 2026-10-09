@@ -1,18 +1,18 @@
 name: E-mail da lista de compras
 
-# Terça e sexta às 6h50 de Brasília (9h50 UTC). O GitHub costuma atrasar alguns minutos,
-# então o e-mail chega perto das 7h.
+# Segunda e quinta às 7h de Brasília (10h UTC). O cron sai 3 min antes porque o GitHub atrasa um pouco.
+# Segunda = lista Sr. Jorge, quinta = lista Feira.
 on:
   schedule:
-    - cron: '50 9 * * 2'
-    - cron: '50 9 * * 5'
+    - cron: '57 9 * * 1'
+    - cron: '57 9 * * 4'
   workflow_dispatch:
     inputs:
       dia:
         description: 'Qual e-mail enviar'
         type: choice
-        options: [terca, sexta]
-        default: sexta
+        options: [segunda, quinta]
+        default: quinta
       teste:
         description: 'Mandar para o e-mail de teste (o seu), não para a sogra'
         type: boolean
@@ -50,28 +50,56 @@ jobs:
           TESTE: ${{ inputs.teste }}
           DIA: ${{ inputs.dia }}
         run: |
-          if [ "$MANUAL" = "true" ] && [ "$TESTE" = "true" ]; then PARA="$EMAIL_TESTE"; else PARA="$EMAIL_DESTINO"; fi
-          if [ -z "$PARA" ]; then echo "Sem e-mail de destino cadastrado nos segredos. Nada enviado."; exit 0; fi
           if [ -z "$DIA" ]; then
-            if [ "$(TZ=America/Sao_Paulo date +%u)" = "2" ]; then DIA=terca; else DIA=sexta; fi
+            if [ "$(TZ=America/Sao_Paulo date +%u)" = "1" ]; then DIA=segunda; else DIA=quinta; fi
           fi
-          if [ "$DIA" = "terca" ]; then ASSUNTO="Lista Sr. Jorge"; DIA_SEMANA="Terça-feira"; else ASSUNTO="Lista Feira"; DIA_SEMANA="Sexta-feira"; fi
+          if [ "$DIA" = "segunda" ]; then ASSUNTO="Lista Sr. Jorge"; DIA_SEMANA="Segunda-feira"; else ASSUNTO="Lista Feira"; DIA_SEMANA="Quinta-feira"; fi
           DATA="${DIA_SEMANA}, $(TZ=America/Sao_Paulo date '+%d/%m')"
-          # No envio de teste (pro seu e-mail), o link entra em modo teste (?...&teste=1): funciona
-          # igual, mas não salva nada nem aparece pros outros como se fosse você mexendo na lista de verdade.
+          LINK_REAL="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}"
+          # O link de teste (&teste=1) funciona igual, mas não salva nada nem mexe na lista de verdade.
+          LINK_TESTE="${LINK_REAL}&teste=1"
+
+          # Manda um e-mail pelo EmailJS. Devolve 0 se deu certo.
+          enviar() { # $1=para $2=assunto $3=data $4=link
+            jq -n --arg u "$PUBLIC_KEY" --arg k "$PRIVATE_KEY" --arg para "$1" --arg assunto "$2" --arg data "$3" --arg link "$4" \
+              '{service_id:"service_0xqf97q",template_id:"template_bbidvdd",user_id:$u,accessToken:$k,template_params:{para:$para,assunto:$assunto,data:$data,link:$link}}' > corpo.json
+            local cod
+            cod=$(curl -sS -o resposta.txt -w '%{http_code}' -X POST https://api.emailjs.com/api/v1.0/email/send \
+              -H 'Content-Type: application/json' -d @corpo.json)
+            rm -f corpo.json
+            echo "Resposta do EmailJS ($cod) para $1: $(cat resposta.txt)"
+            [ "$cod" = "200" ]
+          }
+
           if [ "$MANUAL" = "true" ] && [ "$TESTE" = "true" ]; then
-            LINK="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}&teste=1"
-          else
-            LINK="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}"
+            # Teste manual: só para você.
+            [ -n "$EMAIL_TESTE" ] || { echo "Sem EMAIL_TESTE nos segredos."; exit 1; }
+            enviar "$EMAIL_TESTE" "$ASSUNTO" "$DATA" "$LINK_TESTE" || { echo "O envio falhou."; exit 1; }
+            echo "E-mail de teste \"$ASSUNTO\" enviado."
+            exit 0
           fi
-          jq -n --arg u "$PUBLIC_KEY" --arg k "$PRIVATE_KEY" --arg para "$PARA" --arg assunto "$ASSUNTO" --arg data "$DATA" --arg link "$LINK" \
-            '{service_id:"service_0xqf97q",template_id:"template_bbidvdd",user_id:$u,accessToken:$k,template_params:{para:$para,assunto:$assunto,data:$data,link:$link}}' > corpo.json
-          COD=$(curl -sS -o resposta.txt -w '%{http_code}' -X POST https://api.emailjs.com/api/v1.0/email/send \
-            -H 'Content-Type: application/json' -d @corpo.json)
-          rm -f corpo.json
-          echo "Resposta do EmailJS ($COD): $(cat resposta.txt)"
-          [ "$COD" = "200" ] || { echo "O envio falhou."; exit 1; }
-          echo "E-mail \"$ASSUNTO\" enviado."
+
+          # Envio de verdade: Regina primeiro, depois uma cópia de aviso para você.
+          STATUS=ok
+          if [ -z "$EMAIL_DESTINO" ]; then
+            echo "ERRO: o segredo EMAIL_DESTINO está vazio. Nada foi enviado para a Regina."
+            STATUS=sem_destino
+          elif ! enviar "$EMAIL_DESTINO" "$ASSUNTO" "$DATA" "$LINK_REAL"; then
+            echo "ERRO: o envio para a Regina falhou."
+            STATUS=falhou
+          fi
+
+          if [ -n "$EMAIL_TESTE" ]; then
+            case "$STATUS" in
+              ok)          AVISO="✅ Automação OK: $ASSUNTO enviada à Regina"; DATA_AVISO="$DATA (cópia de aviso para você, o link abre em modo teste)";;
+              sem_destino) AVISO="❌ ATENÇÃO: a Regina NÃO recebeu a $ASSUNTO"; DATA_AVISO="$DATA (segredo EMAIL_DESTINO vazio no GitHub)";;
+              *)           AVISO="❌ ATENÇÃO: o envio da $ASSUNTO para a Regina FALHOU"; DATA_AVISO="$DATA (veja o log da execução no GitHub)";;
+            esac
+            enviar "$EMAIL_TESTE" "$AVISO" "$DATA_AVISO" "$LINK_TESTE" || echo "Aviso: a cópia para você não saiu."
+          fi
+
+          [ "$STATUS" = "ok" ] || exit 1
+          echo "E-mail \"$ASSUNTO\" enviado para a Regina."
 
       # O GitHub desliga agendamentos de repositório público depois de 60 dias sem atividade.
       # Se o último commit tiver 45 dias ou mais, faz um commit vazio para manter o e-mail funcionando.
