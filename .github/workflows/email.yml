@@ -17,6 +17,10 @@ on:
         description: 'Mandar para o e-mail de teste (o seu), não para a sogra'
         type: boolean
         default: true
+      para_regina:
+        description: 'Só com teste ligado: manda o e-mail de teste para a Regina (link de teste), para ver se chega'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -49,11 +53,14 @@ jobs:
           MANUAL: ${{ github.event_name == 'workflow_dispatch' }}
           TESTE: ${{ inputs.teste }}
           DIA: ${{ inputs.dia }}
+          PARA_REGINA: ${{ inputs.para_regina }}
         run: |
           if [ -z "$DIA" ]; then
             if [ "$(TZ=America/Sao_Paulo date +%u)" = "1" ]; then DIA=segunda; else DIA=quinta; fi
           fi
           if [ "$DIA" = "segunda" ]; then ASSUNTO="Lista Sr. Jorge"; DIA_SEMANA="Segunda-feira"; else ASSUNTO="Lista Feira"; DIA_SEMANA="Quinta-feira"; fi
+          # O nome do dia no texto segue o dia real (importante nos envios manuais).
+          case "$(TZ=America/Sao_Paulo date +%u)" in 1) DIA_SEMANA="Segunda-feira";; 2) DIA_SEMANA="Terça-feira";; 3) DIA_SEMANA="Quarta-feira";; 4) DIA_SEMANA="Quinta-feira";; 5) DIA_SEMANA="Sexta-feira";; 6) DIA_SEMANA="Sábado";; 7) DIA_SEMANA="Domingo";; esac
           DATA="${DIA_SEMANA}, $(TZ=America/Sao_Paulo date '+%d/%m')"
           LINK_REAL="https://glaubersooon.github.io/app-lista-feira/#c=${CODIGO}"
           # O link de teste (&teste=1) funciona igual, mas não salva nada nem mexe na lista de verdade.
@@ -72,9 +79,10 @@ jobs:
           }
 
           if [ "$MANUAL" = "true" ] && [ "$TESTE" = "true" ]; then
-            # Teste manual: só para você.
-            [ -n "$EMAIL_TESTE" ] || { echo "Sem EMAIL_TESTE nos segredos."; exit 1; }
-            enviar "$EMAIL_TESTE" "$ASSUNTO" "$DATA" "$LINK_TESTE" || { echo "O envio falhou."; exit 1; }
+            # Teste manual: só para você (ou para a Regina, se marcado, sempre com link de teste).
+            ALVO="$EMAIL_TESTE"; [ "$PARA_REGINA" = "true" ] && ALVO="$EMAIL_DESTINO"
+            [ -n "$ALVO" ] || { echo "Sem e-mail de destino nos segredos."; exit 1; }
+            enviar "$ALVO" "$ASSUNTO" "$DATA" "$LINK_TESTE" || { echo "O envio falhou."; exit 1; }
             echo "E-mail de teste \"$ASSUNTO\" enviado."
             exit 0
           fi
