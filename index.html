@@ -885,12 +885,12 @@ function pedirSalvar(){const m=$('#modal');
 function garantirListaMercado(){if(listas.some(l=>l.id==='merc'))return;
   const ku=listas.findIndex(l=>l.id==='umb'),m=SEMENTE.find(l=>l.id==='merc');if(!m)return;
   listas.splice(ku>=0?ku+1:listas.length,0,JSON.parse(JSON.stringify(m)))}
-// Segunda e terça: todas as listas fecham, menos Sr. Jorge. Demais dias: Feira e Sr. Jorge abrem. Aplica uma vez por dia (marcado na nuvem).
+// Quarta a sexta: Feira e Sr. Jorge abrem. Sábado a terça: todas as listas fecham, menos Sr. Jorge. Aplica uma vez por dia (marcado na nuvem).
 function aplicarRegraDia(){const hoje=new Date().toISOString().slice(0,10);
   if(regraDia&&regraDia.data===hoje)return;
   const dia=new Date().getDay();
-  if(dia===1||dia===2){listas.forEach(l=>{if(l.id!=='jorge')l.min=true;else l.min=false})}
-  else{const feira=listas.find(l=>l.id==='feira'),jorge=listas.find(l=>l.id==='jorge');if(feira)feira.min=false;if(jorge)jorge.min=false}
+  if(dia>=3&&dia<=5){const feira=listas.find(l=>l.id==='feira'),jorge=listas.find(l=>l.id==='jorge');if(feira)feira.min=false;if(jorge)jorge.min=false}
+  else{listas.forEach(l=>{if(l.id!=='jorge')l.min=true;else l.min=false})}
   if(window.nuvem)nuvem.marcarRegraDia(hoje)}
 function editarDet(b){const id=b.closest('.item').dataset.id,r=acharItem(id);if(!r)return;marcaEd(id);
   const inp=document.createElement('input');inp.className='det-in';inp.value=r.i.det;inp.placeholder='ex.: 1kg';inp.setAttribute('aria-label','Detalhe do item');
