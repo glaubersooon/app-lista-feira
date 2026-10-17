@@ -67,9 +67,9 @@ jobs:
           LINK_TESTE="${LINK_REAL}&teste=1"
 
           # Manda um e-mail pelo EmailJS. Devolve 0 se deu certo.
-          enviar() { # $1=para $2=assunto $3=data $4=link
-            jq -n --arg u "$PUBLIC_KEY" --arg k "$PRIVATE_KEY" --arg para "$1" --arg assunto "$2" --arg data "$3" --arg link "$4" \
-              '{service_id:"service_0xqf97q",template_id:"template_bbidvdd",user_id:$u,accessToken:$k,template_params:{para:$para,assunto:$assunto,data:$data,link:$link}}' > corpo.json
+          enviar() { # $1=para $2=assunto $3=data $4=link do botão (o link_teste vai sempre no rodapé do e-mail)
+            jq -n --arg u "$PUBLIC_KEY" --arg k "$PRIVATE_KEY" --arg para "$1" --arg assunto "$2" --arg data "$3" --arg link "$4" --arg lt "$LINK_TESTE" \
+              '{service_id:"service_0xqf97q",template_id:"template_bbidvdd",user_id:$u,accessToken:$k,template_params:{para:$para,assunto:$assunto,data:$data,link:$link,link_teste:$lt}}' > corpo.json
             local cod
             cod=$(curl -sS -o resposta.txt -w '%{http_code}' -X POST https://api.emailjs.com/api/v1.0/email/send \
               -H 'Content-Type: application/json' -d @corpo.json)
@@ -99,11 +99,11 @@ jobs:
 
           if [ -n "$EMAIL_TESTE" ]; then
             case "$STATUS" in
-              ok)          AVISO="✅ Automação OK: $ASSUNTO enviada à Regina"; DATA_AVISO="$DATA (cópia de aviso para você, o link abre em modo teste)";;
+              ok)          AVISO="✅ Automação OK: $ASSUNTO enviada à Regina"; DATA_AVISO="$DATA (cópia de aviso para você)";;
               sem_destino) AVISO="❌ ATENÇÃO: a Regina NÃO recebeu a $ASSUNTO"; DATA_AVISO="$DATA (segredo EMAIL_DESTINO vazio no GitHub)";;
               *)           AVISO="❌ ATENÇÃO: o envio da $ASSUNTO para a Regina FALHOU"; DATA_AVISO="$DATA (veja o log da execução no GitHub)";;
             esac
-            enviar "$EMAIL_TESTE" "$AVISO" "$DATA_AVISO" "$LINK_TESTE" || echo "Aviso: a cópia para você não saiu."
+            enviar "$EMAIL_TESTE" "$AVISO" "$DATA_AVISO" "$LINK_REAL" || echo "Aviso: a cópia para você não saiu."
           fi
 
           [ "$STATUS" = "ok" ] || exit 1

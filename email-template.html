@@ -8,7 +8,8 @@
   Variáveis usadas (já enviadas pelo workflow .github/workflows/email.yml):
     {{assunto}} — título da lista (ex.: "Lista Sr. Jorge" ou "Lista Feira")
     {{data}}    — dia por extenso + data (ex.: "Sexta-feira, 03/10")
-    {{link}}    — link de acesso à lista
+    {{link}}    — link oficial da lista (botão e link de reserva)
+    {{link_teste}} — link da versão de teste (só o "teste" do rodapé)
   No próprio EmailJS, configure também:
     - Campo "To Email"  = {{para}}
     - Campo "Subject"   = {{assunto}}
@@ -48,7 +49,7 @@
         </td></tr>
         <tr><td style="border-top:1px solid #edf0ee;padding:18px 32px;text-align:center;font:12px/1.6 Arial,sans-serif;color:#a6acb2;">
           Lembrete automático enviado pelo app Lista de Compras.<br>Este link é pessoal — não compartilhe.
-          <br><a href="{{link}}" style="color:#c6ccd2;text-decoration:underline;font-size:11px;">teste</a>
+          <br><a href="{{link_teste}}" style="color:#c6ccd2;text-decoration:underline;font-size:11px;">teste</a>
         </td></tr>
       </table>
     </td></tr>
