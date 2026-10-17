@@ -82,7 +82,9 @@ jobs:
             # Teste manual: só para você (ou para a Regina, se marcado, sempre com link de teste).
             ALVO="$EMAIL_TESTE"; [ "$PARA_REGINA" = "true" ] && ALVO="$EMAIL_DESTINO"
             [ -n "$ALVO" ] || { echo "Sem e-mail de destino nos segredos."; exit 1; }
-            enviar "$ALVO" "$ASSUNTO" "$DATA" "$LINK_TESTE" || { echo "O envio falhou."; exit 1; }
+            # Para você, o botão é o oficial (igual ao envio de verdade); para a Regina, o botão vai em modo teste.
+            BOTAO="$LINK_REAL"; [ "$PARA_REGINA" = "true" ] && BOTAO="$LINK_TESTE"
+            enviar "$ALVO" "$ASSUNTO" "$DATA" "$BOTAO" || { echo "O envio falhou."; exit 1; }
             echo "E-mail de teste \"$ASSUNTO\" enviado."
             exit 0
           fi
