@@ -105,7 +105,7 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .impr-barra{display:flex;gap:8px;flex-wrap:wrap;width:100%;max-width:794px;align-items:center;background:var(--bg);border-radius:12px;padding:10px 12px}
 .impr-barra span{flex:1 1 180px;font-size:16px;color:var(--suave)}
 .folha-caixa{width:100%;max-width:794px;flex:none}
-.folha{width:794px;height:1123px;background:#fff;color:#111;padding:57px 64px;transform-origin:top left;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.3);font-family:"Atkinson Hyperlegible",Arial,sans-serif}
+.folha{width:794px;height:1123px;background:#fff;color:#111;padding:57px 44px;transform-origin:top left;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.3);font-family:"Atkinson Hyperlegible",Arial,sans-serif}
 .folha h1{font-size:22px;margin:0}
 .folha .fdata{font-size:15px;color:#555;margin:2px 0 26px}
 .folha h2{font-size:19px;margin:0 0 8px;padding-bottom:4px;border-bottom:1px solid #bbb;color:#111}
@@ -118,9 +118,13 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .folha li:hover .fx,.folha .fx:focus-visible{opacity:1}
 @media (hover:none){.folha .fx{opacity:.7}}
 .folha li::before{content:"•";flex:none}
-.folha .duas{display:flex;gap:40px;align-items:flex-start}
+.folha ul.cx li::before{content:"";width:.7em;height:.7em;border:1.5px solid #222;border-radius:2px;align-self:center;display:block}
+.folha li{font-size:var(--fs,17px);padding:var(--pad,3px) 4px}
+.folha li span{white-space:nowrap}
+.folha .duas{display:flex;gap:28px;align-items:flex-start}
 .folha .coluna{flex:1;min-width:0}
 .folha .bloco{padding-bottom:24px}
+.folha .bloco:last-child{padding-bottom:0}
 .item.off{background:var(--fundo-off)}
 .item.off .nome{color:var(--apagado)}
 .itens .item:hover{background:var(--hover);border-color:var(--apagado)}
@@ -138,6 +142,8 @@ button:focus-visible{outline:3px solid var(--jorge);outline-offset:2px}
 .acess{display:flex;justify-content:flex-end;gap:6px;order:-1;flex:0 0 100%;margin-bottom:-10px}
 .acess button{min-height:30px;padding:2px 10px;font-size:14px;color:var(--suave);border-radius:8px}
 .item.off .ck{background:transparent;border:2px solid var(--apagado);color:var(--apagado)}
+.item.sel{background:#dbeafe!important;box-shadow:0 0 0 2px #3b82f6}
+.itens.sel-modo .item{cursor:pointer}
 .item.editando{outline:2px solid var(--pres);outline-offset:2px;position:relative}
 .item.editando::after{content:"outra pessoa";position:absolute;top:-12px;right:10px;background:var(--pres);color:#fff;font-size:12px;padding:1px 8px;border-radius:6px}
 .vazio{color:var(--suave);font-size:16px;padding:10px 4px;border:1px dashed var(--linha);border-radius:10px;text-align:center}
@@ -448,6 +454,7 @@ function nomePDF(){const nomes=listas.filter(l=>!l.min).map(l=>l.nome);const dia
 
 
 let busca=null,addAberto=null,addTexto='',alertaDup=null,confirmaTudo=null,previaAberta=false;
+let grupoSel=null,selLista=null;const selIds=new Set();
 let buscaListaId=null,buscaListaTexto='',novaListaAberta=false,novaListaTexto='',confirmaExcluir=null,menuAlvo=null,lixFiltro='todos';
 
 const d=new Date();
@@ -455,7 +462,7 @@ const dataTxt=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'
 $('#data').textContent=dataTxt;
 
 function contar(l){const a=l.itens.filter(i=>!i.off).length;return l.itens.length?`${a} de ${l.itens.length}<span class="conta-suf"> para comprar</span>`:'sem itens'}
-function itemHTML(i){return `<li class="item${i.off?' off':''}${editandoIds.has(i.id)?' editando':''}" data-id="${i.id}">
+function itemHTML(i){return `<li class="item${i.off?' off':''}${editandoIds.has(i.id)?' editando':''}${selIds.has(i.id)?' sel':''}" data-id="${i.id}">
   <button class="ck" aria-label="${i.off?'Marcar para comprar':'Não comprar'}">${i.off?'✕':'✓'}</button>
   <button class="emo${i.e?'':' sem'}" data-emo aria-label="Trocar emoji">${i.e?ico(i.e):'☺'}</button><span class="nome" title="${esc(i.n)}">${esc(i.n)}</span>
   <button class="det${i.det?'':' vazio-d'}" data-det aria-label="Detalhe do item">${i.det?esc(i.det):'detalhe'}</button></li>`}
@@ -472,10 +479,10 @@ function tudoHTML(l){
   const conf=confirmaTudo===l.id?`<div class="alerta" role="alert" style="margin:10px 16px 0"><div><b>Tem certeza?</b><br>Se todos os itens forem marcados de uma vez, a organização atual será perdida.</div><div class="acoes"><button data-tudo-cancel>Cancelar e manter como está</button><button data-tudo-sim style="font-weight:700">Sim, marcar todos</button></div></div>`:'';
   const buscaAtiva=buscaListaId===l.id;
   const campoBusca=buscaAtiva?`<div class="bg-campo" style="margin:8px 16px 0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg><input id="buscaLista-${l.id}" value="${esc(buscaListaTexto)}" placeholder="Digite o produto" autocomplete="off" aria-label="Buscar nesta lista"><button type="button" data-busca-lista-fechar="${l.id}">✕ Fechar</button></div>`:'';
-  return `<div class="sub"><button data-tudo>${l.tudo?'☑ Desmarcar tudo':'☐ Marcar tudo'}</button><button data-org>⇅ Organizar lista</button><button data-busca-lista="${l.id}" aria-pressed="${buscaAtiva}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg> Buscar nessa lista</button></div>${campoBusca}${conf}`}
+  return `<div class="sub"><button data-tudo>${l.tudo?'☑ Desmarcar tudo':'☐ Marcar tudo'}</button><button data-org>⇅ Organizar lista</button><button data-sel="${l.id}" aria-pressed="${selLista===l.id}">${selLista===l.id?'✔ Concluir seleção':'☷ Selecionar vários'}</button><button data-busca-lista="${l.id}" aria-pressed="${buscaAtiva}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg> Buscar nessa lista</button></div>${campoBusca}${conf}`}
 function corpoHTML(l){const vazia=!l.itens.length;return `<div class="corpo">${tudoHTML(l)}${addHTML(l)}
   ${mostrarDica()&&l.itens.length>1?'<div class="dica-arrastar">✋ Segure um item e arraste para mudar a ordem</div>':''}
-  <ul class="itens${vazia?' vazia':''}" data-ul="${l.id}">${vazia?'<li class="vazio-lista" aria-hidden="true">Arraste itens para cá ou toque em Adicionar item</li>':l.itens.map(itemHTML).join('')}</ul></div>`}
+  <ul class="itens${vazia?' vazia':''}${selLista===l.id?' sel-modo':''}" data-ul="${l.id}">${vazia?'<li class="vazio-lista" aria-hidden="true">Arraste itens para cá ou toque em Adicionar item</li>':l.itens.map(itemHTML).join('')}</ul></div>`}
 
 function render(){
   garantirListaMercado();aplicarRegraDia();
@@ -496,9 +503,9 @@ function render(){
   cards.push(nb);
   montar(g,cards);
   document.querySelectorAll('[data-ul]').forEach(ul=>Sortable.create(ul,{group:'listas',animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,filter:'.ck,.det,.det-in,.emo,.nome-in,.vazio-lista',preventOnFilter:false,
-    onStart:e=>{document.body.classList.add('arrastando');iniciaFlut(e.item);marcaEd(e.item.dataset.id)},
+    onStart:e=>{document.body.classList.add('arrastando');iniciaFlut(e.item);marcaEd(e.item.dataset.id);grupoSel=selLista&&selIds.has(e.item.dataset.id)&&selIds.size>1?[...document.querySelectorAll('.item.sel')]:null},
     onMove:e=>{document.querySelectorAll('.quadro').forEach(q=>q.classList.toggle('alvo',q.contains(e.to)))},
-    onEnd:()=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.alvo').forEach(q=>q.classList.remove('alvo'));lerDOM();marcaEd(null);dicaVista();render()}}));
+    onEnd:e=>{pararFlut();document.body.classList.remove('arrastando');document.querySelectorAll('.alvo').forEach(q=>q.classList.remove('alvo'));if(grupoSel){let ancora=e.item;grupoSel.filter(x=>x!==e.item).forEach(x=>{ancora.after(x);ancora=x});grupoSel=null;selIds.clear();selLista=null}lerDOM();marcaEd(null);dicaVista();render()}}));
   if(!ehMobile())document.querySelectorAll('.col:not(.col-nova)').forEach(c=>Sortable.create(c,{group:'colunas',handle:'.quadro-topo',filter:'.tog,.xlista,.nova',preventOnFilter:false,animation:180,ghostClass:'arrasto',fallbackClass:'arrasto-clone',delay:180,delayOnTouchOnly:true,forceFallback:true,fallbackTolerance:4,
     swap:true,swapClass:'quadro-troca',
     onStart:e=>{document.body.classList.add('arrastando');iniciaFlutLista(e.item)},
@@ -600,38 +607,53 @@ function previa(){const p=$('#previa');const inc=listas.filter(l=>!l.min);
   p.innerHTML=`<div class="previa-topo"><b>Assim vai sair na impressão</b><span class="data">${dataTxt}</span><button data-fechar-previa>Fechar</button></div>`+
     (inc.length?inc.map(l=>{const at=l.itens.filter(i=>!i.off);return `<div><h3>Lista ${esc(l.nome)}</h3>${at.length?`<ul>${at.map(i=>`<li>${esc(linha(i))}</li>`).join('')}</ul>`:'<span class="data">Nenhum item marcado</span>'}</div>`}).join(''):'<span class="data">Nenhuma lista ativa.</span>');
   p.hidden=false}
-const FOLHA={w:794,h:1123,mv:57,mh:64,gap:40};
+const FOLHA={w:794,h:1123,mv:57,mh:44,gap:28};
 // Monta a folha item a item (não lista inteira de uma vez): uma lista comprida (ex.: Mercado)
 // continua na coluna seguinte, e se ainda não couber, na página seguinte — nunca fica cortada.
 // Quando só a primeira coluna é usada numa página, essa página sai em largura cheia (sem a
 // coluna vazia do lado), do jeito que já saía antes quando cabia tudo numa lista só.
 function folha(){const inc=listas.filter(l=>!l.min);
-  const util=FOLHA.w-2*FOLHA.mh,colW=(util-FOLHA.gap)/2,altura=FOLHA.h-2*FOLHA.mv,padBloco=24;
+  const util=FOLHA.w-2*FOLHA.mh,colW=(util-FOLHA.gap)/2,altura=FOLHA.h-2*FOLHA.mv,uma=inc.length===1,padBloco=uma?0:24;
   const cab=`<h1>Lista ${inc.map(l=>esc(l.nome)).join(' e ')}</h1><div class="fdata">${dataTxt}</div>`;
-  const titulo=(l,cont)=>`<h2>Lista ${esc(l.nome)}${cont?' <small style="font-weight:400;color:#777">(continuação)</small>':''}</h2>`;
+  // Só uma lista ativa: o nome já está no topo da folha, então não repete como subtítulo nem "(continuação)".
+  const titulo=(l,cont)=>uma?'':`<h2>Lista ${esc(l.nome)}${cont?' <small style="font-weight:400;color:#777">(continuação)</small>':''}</h2>`;
   const med=document.createElement('div');med.className='folha';med.style.cssText=`position:absolute;left:-9999px;top:0;visibility:hidden;height:auto;padding:0;width:${util}px`;document.body.appendChild(med);
-  const medir=html=>{med.innerHTML=html;return med.offsetHeight};
-  const hCab=medir(cab);med.style.width=colW+'px';
-  const seqs=inc.map(l=>{const at=l.itens.filter(i=>!i.off);
-    const itens=at.length?at.map(i=>`<li data-id="${i.id}"><span>${esc(linha(i))}</span><button class="fx" data-fx aria-label="Tirar da impressão">✕</button></li>`):['<li>Nenhum item marcado</li>'];
-    return {l,tAbre:medir(titulo(l,false)),tCont:medir(titulo(l,true)),itens,alturas:itens.map(h=>medir(`<ul>${h}</ul>`))}});
+  // Níveis de aperto: primeiro diminui o espaço entre linhas, depois a letra, até caber numa folha em duas colunas.
+  const NIVEIS=[[17,3],[17,2],[16,1],[15,1],[14,0],[13,0]];
+  const monta=([fs,pad])=>{
+    med.style.setProperty('--fs',fs+'px');med.style.setProperty('--pad',pad+'px');med.style.width=util+'px';
+    const medir=html=>{med.innerHTML=html;return med.offsetHeight};
+    const hCab=medir(cab);
+    const larg=html=>{med.style.width='max-content';med.innerHTML=html;const w=med.scrollWidth;med.style.width=util+'px';return w};
+    let maxW=0;
+    med.style.width=colW+'px';
+    const seqs=inc.map(l=>{const at=l.itens.filter(i=>!i.off);
+      const itens=at.length?at.map(i=>`<li data-id="${i.id}"><span>${esc(linha(i))}</span><button class="fx" data-fx aria-label="Tirar da impressão">✕</button></li>`):['<li>Nenhum item marcado</li>'];
+      const cl=l.id==='merc'?' class="cx"':'';
+      const alturas=itens.map(h=>medir(`<ul${cl}>${h}</ul>`));
+      itens.forEach(h=>{maxW=Math.max(maxW,larg(`<ul${cl}>${h}</ul>`));med.style.width=colW+'px'});
+      return {l,tAbre:uma?0:medir(titulo(l,false)),tCont:uma?0:medir(titulo(l,true)),itens,alturas}});
+    let colsPag=[[[],[]]],pg=0,col=0,usado=0;
+    const limite=()=>altura-(pg===0&&col===0?hCab:0);
+    const proxColuna=()=>{if(col===0){col=1;usado=0}else{colsPag.push([[],[]]);pg++;col=0;usado=0}};
+    const runAtual=()=>{const arr=colsPag[pg][col];return arr[arr.length-1]};
+    seqs.forEach(s=>{
+      if(usado>0&&usado+s.tAbre>limite())proxColuna();
+      colsPag[pg][col].push({lid:s.l.id,titulo:titulo(s.l,false),itens:[]});usado+=s.tAbre+padBloco;
+      s.itens.forEach((itemHtml,ii)=>{const h=s.alturas[ii];
+        if(usado+h>limite()){proxColuna();colsPag[pg][col].push({lid:s.l.id,titulo:titulo(s.l,true),itens:[]});usado+=s.tCont+padBloco}
+        runAtual().itens.push(itemHtml);usado+=h})});
+    const duas=colsPag.some(c=>c[1].length);
+    return {colsPag,fs,pad,cabe:colsPag.length===1&&maxW<=(duas?colW:util)}};
+  let r;for(const n of NIVEIS){r=monta(n);if(r.cabe)break}
   med.remove();
-  let colsPag=[[[],[]]],pg=0,col=0,usado=0;
-  const limite=()=>altura-(pg===0&&col===0?hCab:0);
-  const proxColuna=()=>{if(col===0){col=1;usado=0}else{colsPag.push([[],[]]);pg++;col=0;usado=0}};
-  const runAtual=()=>{const arr=colsPag[pg][col];return arr[arr.length-1]};
-  seqs.forEach(s=>{
-    if(usado>0&&usado+s.tAbre>limite())proxColuna();
-    colsPag[pg][col].push({lid:s.l.id,titulo:titulo(s.l,false),itens:[]});usado+=s.tAbre+padBloco;
-    s.itens.forEach((itemHtml,ii)=>{const h=s.alturas[ii];
-      if(usado+h>limite()){proxColuna();colsPag[pg][col].push({lid:s.l.id,titulo:titulo(s.l,true),itens:[]});usado+=s.tCont+padBloco}
-      runAtual().itens.push(itemHtml);usado+=h})});
-  const runHtml=r=>`<div class="bloco">${r.titulo}<ul data-fl="${r.lid}">${r.itens.join('')}</ul></div>`;
+  const colsPag=r.colsPag,estilo=`--fs:${r.fs}px;--pad:${r.pad}px`;
+  const runHtml=r=>`<div class="bloco">${r.titulo}<ul data-fl="${r.lid}"${r.lid==='merc'?' class="cx"':''}>${r.itens.join('')}</ul></div>`;
   const paginaHtml=(cols,idx)=>{const c0=cols[0].map(runHtml).join(''),c1=cols[1].map(runHtml).join('');
     return (idx===0?cab:'')+(c1?`<div class="duas"><div class="coluna">${c0}</div><div class="coluna">${c1}</div></div>`:c0)};
   const o=$('#impr');
   o.innerHTML=`<div class="impr-barra"><button data-fechar-impr>← Voltar</button><span>Folha A4, como vai sair no papel${colsPag.length>1?` (${colsPag.length} páginas)`:''}</span><button class="principal so-pc" data-imprimir>🖨 Imprimir agora</button><button class="principal so-cel" data-pdf>📄 Salvar e compartilhar PDF</button></div>`+
-    colsPag.map((cols,idx)=>`<div class="folha-caixa"><div class="folha">${paginaHtml(cols,idx)}</div></div>`).join('');
+    colsPag.map((cols,idx)=>`<div class="folha-caixa"><div class="folha" style="${estilo}">${paginaHtml(cols,idx)}</div></div>`).join('');
   o.hidden=false;escala();
   // Grupo compartilhado entre todas as listas (e todos os pedaços de uma mesma lista quebrada em
   // coluna/página): permite arrastar item pra outra coluna da mesma lista OU pra outra lista.
@@ -899,6 +921,8 @@ function editarDet(b){const id=b.closest('.item').dataset.id,r=acharItem(id);if(
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();salvar(true)}if(e.key==='Escape'){e.stopPropagation();salvar(false)}});
   inp.addEventListener('blur',()=>salvar(true))}
 
+// Modo seleção: tocar em qualquer parte do item (não só no topo) marca/desmarca para arrastar junto.
+document.addEventListener('click',e=>{if(!selLista)return;const li=e.target.closest&&e.target.closest('.itens.sel-modo .item');if(!li)return;e.stopImmediatePropagation();e.preventDefault();const id=li.dataset.id;if(selIds.has(id))selIds.delete(id);else selIds.add(id);li.classList.toggle('sel',selIds.has(id))},{capture:true});
 document.addEventListener('click',e=>{
   if(menuAlvo&&!e.target.closest('#menuItem'))fecharMenu();
   const b=e.target.closest('button');if(!b)return;
@@ -932,6 +956,7 @@ document.addEventListener('click',e=>{
   if(b.hasAttribute('data-zap')){if(!temAtiva())return;finalizar();const txtZap=textoZap();fecharMercadoDepois();location.href='https://wa.me/?text='+encodeURIComponent(txtZap);return}
   if(b.hasAttribute('data-busca-abrir')){busca=busca??'';$('#buscaGeral').hidden=false;$('#bg-in').focus();aplicarBusca();return}
   if(b.hasAttribute('data-busca-fechar')){busca=null;$('#bg-in').value='';$('#buscaGeral').hidden=true;aplicarBusca();return}
+  if(b.dataset.sel){if(selLista===b.dataset.sel){selLista=null;selIds.clear();aviso('Seleção encerrada.')}else{selLista=b.dataset.sel;selIds.clear();aviso('Toque nos itens que quer mover juntos e arraste um deles.')}render();return}
   if(b.dataset.buscaLista){buscaListaId=buscaListaId===b.dataset.buscaLista?null:b.dataset.buscaLista;buscaListaTexto='';render();return}
   if(b.dataset.buscaListaFechar){buscaListaId=null;buscaListaTexto='';render();return}
   if(b.hasAttribute('data-nova-abrir')){novaListaAberta=true;render();return}
